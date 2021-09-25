@@ -5,6 +5,7 @@ import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Context;
+import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.ListBuffer;
 import com.sun.tools.javac.util.Names;
 import io.github.yfblock.yfSql.Annotation.DataRunner;
@@ -19,14 +20,15 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Set;
 
 @SupportedAnnotationTypes(value = {
         "io.github.yfblock.yfSql.Annotation.Select",
         "io.github.yfblock.yfSql.Annotation.DataRunner"
 })
-@SupportedSourceVersion(value = SourceVersion.RELEASE_11)
 public class SelectProcessor extends AbstractProcessor {
 
     private Trees trees;
@@ -42,10 +44,12 @@ public class SelectProcessor extends AbstractProcessor {
         for (Element ele : roundEnvironment.getElementsAnnotatedWith(DataRunner.class)) {
             DataRunnerTranslator dataRunnerTranslator =
                     new DataRunnerTranslator(mMessager, treeMaker, names, ele.getAnnotation(DataRunner.class));
-            addImports(ele, SqlRunner.class);
-            addImports(ele, MysqlRunner.class);
-            addImports(ele, DataTableWrapper.class);
-            addImports(ele, MessageFormat.class);
+            ArrayList<Class<?>> addClasses = new ArrayList<>();
+            addClasses.add(SqlRunner.class);
+            addClasses.add(MysqlRunner.class);
+            addClasses.add(DataTableWrapper.class);
+            addClasses.add(MessageFormat.class);
+            addImports(ele, addClasses);
             JCTree tree = (JCTree) trees.getTree(ele);
             tree.accept(dataRunnerTranslator);
         }
@@ -85,17 +89,35 @@ public class SelectProcessor extends AbstractProcessor {
     /**
      * add imports
      * @param element       class element
-     * @param importClass   the class will be imported
+     * @param classes       the classes will be imported
      */
-    private void addImports(Element element, Class<?> importClass) {
+    private void addImports(Element element, ArrayList<Class<?>> classes) {
         JCTree.JCCompilationUnit compilationUnit = (JCTree.JCCompilationUnit) trees.getPath(element).getCompilationUnit();
-        JCTree.JCFieldAccess fieldAccess = treeMaker.Select(treeMaker.Ident(names.fromString(importClass.getPackage().getName())), names.fromString(importClass.getSimpleName()));
-        JCTree.JCImport jcImport = treeMaker.Import(fieldAccess, false);
+       ArrayList<JCTree> jcTrees = new ArrayList<>();
+        for(Class<?> cls : classes) {
+            JCTree.JCFieldAccess fieldAccess = treeMaker.Select(treeMaker.Ident(names.fromString(cls.getPackage().getName())), names.fromString(cls.getSimpleName()));
+            JCTree.JCImport jcImport = treeMaker.Import(fieldAccess, false);
+            jcTrees.add(jcImport);
+        }
         ListBuffer<JCTree> imports = new ListBuffer<>();
+        Boolean hasImport = false;
         for (int i = 0; i < compilationUnit.defs.size(); i++) {
             imports.append(compilationUnit.defs.get(i));
-            if (compilationUnit.defs.get(i).toString().indexOf("package ") == 0) imports.append(jcImport);
+            if (compilationUnit.defs.get(i).toString().indexOf("package ") == 0 && !hasImport) {
+                imports.appendList(List.from(jcTrees));
+                mMessager.printMessage(Diagnostic.Kind.NOTE, "hasImport");
+                hasImport = true;
+            } else if (compilationUnit.defs.get(i).toString().indexOf("import ") == 0 && !hasImport) {
+                imports.appendList(List.from(jcTrees));
+                mMessager.printMessage(Diagnostic.Kind.NOTE, "hasImport");
+                hasImport = true;
+            }
         }
         compilationUnit.defs = imports.toList();
+    }
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latestSupported();
     }
 }

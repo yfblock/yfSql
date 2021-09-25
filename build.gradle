@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'io.github.yfblock'
-version '1.0.3-RELEASE'
+version '1.0.5-SNAPSHOT'
 
 ext {
     gitUrl  = 'https://github.com/yfblock/yfSql'
@@ -17,21 +17,55 @@ repositories {
     mavenCentral()
 }
 
+// 设置多版本兼容
+sourceSets {
+    java11 {
+        java {
+            srcDirs = ['src/main/java11']
+        }
+    }
+}
+
+
 dependencies {
     // java-mysql-connector
     implementation 'mysql:mysql-connector-java:8.0.26'
+
+    // 多版本兼容文件
+    java11Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava }
+
 }
 
 
-test {
-    useJUnitPlatform()
-}
-
+// 默认编译
 compileJava {
+    sourceCompatibility '1.8'
+    targetCompatibility '1.8'
+}
+
+// 多版本之一11编译
+compileJava11Java {
     options.compilerArgs << '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED' <<
             '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED' <<
             '--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED' <<
             '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED'
+
+    sourceCompatibility '11'
+    targetCompatibility '11'
+}
+
+// 设置打包为Jar包
+jar {
+    into('META-INF/versions/11') {
+        from sourceSets.java11.output
+    }
+
+    manifest {
+        attributes(
+                "Manifest-Version": "1.0",
+                "Multi-Release": true
+        )
+    }
 }
 
 
