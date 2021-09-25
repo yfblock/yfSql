@@ -1,0 +1,3 @@
+rootProject.name = 'yfSql'
+include ':Test'
+project(':Test').projectDir = new File(rootDir, 'Test')

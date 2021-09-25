@@ -1,0 +1,108 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'signing'
+}
+
+group 'io.github.yfblock'
+version '1.0.3-RELEASE'
+
+ext {
+    gitUrl  = 'https://github.com/yfblock/yfSql'
+}
+
+repositories {
+    maven { url 'https://maven.aliyun.com/repository/public/' }
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    // java-mysql-connector
+    implementation 'mysql:mysql-connector-java:8.0.26'
+}
+
+
+test {
+    useJUnitPlatform()
+}
+
+compileJava {
+    options.compilerArgs << '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED' <<
+            '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED' <<
+            '--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED' <<
+            '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED'
+}
+
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+javadoc {
+    options.addStringOption("charset", "UTF-8")
+    options.addStringOption("-add-exports", "jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED")
+    options.addStringOption("-add-exports ", "jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED")
+    options.addStringOption("-add-exports  ", "jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED")
+    options.addStringOption("-add-exports   ", "jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED")
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = rootProject.name
+            version = rootProject.version
+            from components.java
+            pom {
+                name = rootProject.name
+                description = 'yfSql'
+                packaging = 'jar'
+                url = rootProject.ext.gitUrl
+                properties = [
+                        myProp: "value",
+                        "prop.with.dots": "anotherValue"
+                ]
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'yufeng'
+                        name = 'yufeng'
+                        email = '321353225@qq.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git@github.com:yfblock/yfSql.git'
+                    developerConnection = 'scm:git:ssh://github.com/yfblock/yfSql.git'
+                    url = rootProject.ext.gitUrl
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "OSSRH"
+            if (project.version.toString().endsWith("-SNAPSHOT")) {
+                url = "https://s01.oss.sonatype.org/content/repositories/snapshots"
+            } else {
+                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
+            }
+            credentials {
+                username = "yufeng"
+                password = "200007017515aA.."
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
