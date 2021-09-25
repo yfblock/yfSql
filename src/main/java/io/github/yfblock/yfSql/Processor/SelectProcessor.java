@@ -8,10 +8,7 @@ import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.ListBuffer;
 import com.sun.tools.javac.util.Names;
-import io.github.yfblock.yfSql.Annotation.DataRunner;
-import io.github.yfblock.yfSql.Annotation.Delete;
-import io.github.yfblock.yfSql.Annotation.Insert;
-import io.github.yfblock.yfSql.Annotation.Select;
+import io.github.yfblock.yfSql.Annotation.*;
 import io.github.yfblock.yfSql.Runner.MysqlRunner;
 import io.github.yfblock.yfSql.Runner.SqlRunner;
 import io.github.yfblock.yfSql.Sql.DataTableWrapper;
@@ -68,6 +65,14 @@ public class SelectProcessor extends AbstractProcessor {
                 JCTree tree = (JCTree) trees.getTree(ele);
                 InsertTranslator insertTranslator = new InsertTranslator(mMessager, treeMaker, names, ele.getAnnotation(Insert.class));
                 tree.accept(insertTranslator);
+            }
+        }
+
+        for (Element ele : roundEnvironment.getElementsAnnotatedWith(Update.class)) {
+            if (ele.getKind() == ElementKind.METHOD) {
+                JCTree tree = (JCTree) trees.getTree(ele);
+                UpdateTranslator updateTranslator = new UpdateTranslator(mMessager, treeMaker, names, ele.getAnnotation(Update.class));
+                tree.accept(updateTranslator);
             }
         }
 

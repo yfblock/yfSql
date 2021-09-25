@@ -64,7 +64,8 @@ public class SqlTestApplication {
         UserWrapper userWrapper = new UserWrapper();
         User user = userWrapper.login("admin", "21232f297a57a5a743894a0e4a801fc3");
         if(user!=null) System.out.println(user.getId());
-        userWrapper.register("admins", "123");
+//        userWrapper.register("admins", "123");
         userWrapper.deleteUserById(25);
+        userWrapper.updateQQById("321", 10);
     }
 }
