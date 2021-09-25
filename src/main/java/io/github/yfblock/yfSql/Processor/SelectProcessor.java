@@ -9,6 +9,7 @@ import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.ListBuffer;
 import com.sun.tools.javac.util.Names;
 import io.github.yfblock.yfSql.Annotation.DataRunner;
+import io.github.yfblock.yfSql.Annotation.Delete;
 import io.github.yfblock.yfSql.Annotation.Insert;
 import io.github.yfblock.yfSql.Annotation.Select;
 import io.github.yfblock.yfSql.Runner.MysqlRunner;
@@ -69,6 +70,14 @@ public class SelectProcessor extends AbstractProcessor {
                 tree.accept(insertTranslator);
             }
         }
+
+        for (Element ele : roundEnvironment.getElementsAnnotatedWith(Delete.class)) {
+            if (ele.getKind() == ElementKind.METHOD) {
+                JCTree tree = (JCTree) trees.getTree(ele);
+                DeleteTranslator deleteTranslator = new DeleteTranslator(mMessager, treeMaker, names, ele.getAnnotation(Delete.class));
+                tree.accept(deleteTranslator);
+            }
+        }
         return true;
     }
 
@@ -105,11 +114,9 @@ public class SelectProcessor extends AbstractProcessor {
             imports.append(compilationUnit.defs.get(i));
             if (compilationUnit.defs.get(i).toString().indexOf("package ") == 0 && !hasImport) {
                 imports.appendList(List.from(jcTrees));
-                mMessager.printMessage(Diagnostic.Kind.NOTE, "hasImport");
                 hasImport = true;
             } else if (compilationUnit.defs.get(i).toString().indexOf("import ") == 0 && !hasImport) {
                 imports.appendList(List.from(jcTrees));
-                mMessager.printMessage(Diagnostic.Kind.NOTE, "hasImport");
                 hasImport = true;
             }
         }

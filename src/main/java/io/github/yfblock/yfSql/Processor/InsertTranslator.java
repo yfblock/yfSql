@@ -15,20 +15,12 @@ import io.github.yfblock.yfSql.Annotation.Select;
 
 import java.util.ArrayList;
 
-public class InsertTranslator extends TreeTranslator {
+public class InsertTranslator extends BaseTranslator {
 
-    private final Messager    messager;
-    private final TreeMaker   treeMaker;
-    private final Names       names;
     private final Insert      insert;
-    private ArrayList<JCTree.JCExpression> params = new ArrayList<>();
-    private String typeName;
-    private boolean isSingle = false;
 
     public InsertTranslator(Messager messager, TreeMaker treeMaker, Names names, Insert insert) {
-        this.messager   = messager;
-        this.treeMaker  = treeMaker;
-        this.names      = names;
+        super(messager, treeMaker, names);
         this.insert     = insert;
     }
 
@@ -64,33 +56,5 @@ public class InsertTranslator extends TreeTranslator {
                 )
         );
         jcBlock.stats = List.from(newList);
-        messager.printMessage(Diagnostic.Kind.NOTE, List.from(newList).toString());
-    }
-
-    @Override
-    public void visitMethodDef(JCTree.JCMethodDecl tree)  {
-        String returnTypeName = tree.getReturnType().toString();
-        if(returnTypeName.contains("<")) {
-            typeName = returnTypeName.substring(returnTypeName.indexOf('<') + 1, returnTypeName.indexOf('>'));
-            isSingle = false;
-        } else {
-            typeName = returnTypeName;
-            isSingle = true;
-        }
-        for(JCTree.JCVariableDecl jcVariableDecl : tree.getParameters()) {
-            if(jcVariableDecl.getType().toString().equals("String")) {
-                ArrayList<JCTree.JCExpression> args = new ArrayList<>();
-                args.add(treeMaker.Literal("\"{0}\""));
-                args.add(treeMaker.Ident(jcVariableDecl.getName()));
-                params.add(treeMaker.Apply(
-                        List.nil(),
-                        treeMaker.Select(treeMaker.Ident(names.fromString("MessageFormat")), names.fromString("format")),
-                        List.from(args)
-                ));
-                continue;
-            }
-            params.add(treeMaker.Ident(jcVariableDecl.getName()));
-        }
-        super.visitMethodDef(tree);
     }
 }
