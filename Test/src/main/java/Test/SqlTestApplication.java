@@ -62,10 +62,14 @@ public class SqlTestApplication {
         else System.out.println("未找到用户!");
 
         UserWrapper userWrapper = new UserWrapper();
+        // 增
+        userWrapper.register("admins", "123");
+        // 删
+        userWrapper.deleteUserById(25);
+        // 改
+        userWrapper.updateQQById("321", 10);
+        // 查
         User user = userWrapper.login("admin", "21232f297a57a5a743894a0e4a801fc3");
         if(user!=null) System.out.println(user.getId());
-//        userWrapper.register("admins", "123");
-        userWrapper.deleteUserById(25);
-        userWrapper.updateQQById("321", 10);
     }
 }
