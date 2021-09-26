@@ -15,6 +15,9 @@ dependencies {
     implementation project(':')
     annotationProcessor project(':')
 
+    // java-mysql-connector
+    implementation 'mysql:mysql-connector-java:8.0.26'
+
     // lombok
     implementation 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'

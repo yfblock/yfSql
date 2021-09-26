@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'io.github.yfblock'
-version '1.0.5'
+version '1.0.6-SNAPSHOT'
 
 ext {
     gitUrl  = 'https://github.com/yfblock/yfSql'
@@ -28,12 +28,8 @@ sourceSets {
 
 
 dependencies {
-    // java-mysql-connector
-    implementation 'mysql:mysql-connector-java:8.0.26'
-
     // 多版本兼容文件
     java11Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava }
-
 }
 
 
