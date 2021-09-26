@@ -15,11 +15,11 @@ public class MysqlRunner implements SqlRunner {
      * Constructor, init mysql connection
      */
     public MysqlRunner() {
-        this(Config.getConfigOrDefault("sf.mysql.host", "localhost"),
-                Config.getConfigOrDefault("sf.mysql.port", "3306"),
-                Config.getConfig("sf.mysql.username"),
-                Config.getConfig("sf.mysql.password"),
-                Config.getConfig("sf.mysql.database"));
+        this(Config.getConfigOrDefault("yfSql.mysql.host", "localhost"),
+                Config.getConfigOrDefault("yfSql.mysql.port", "3306"),
+                Config.getConfig("yfSql.mysql.username"),
+                Config.getConfig("yfSql.mysql.password"),
+                Config.getConfig("yfSql.mysql.database"));
     }
 
     /**
@@ -45,7 +45,7 @@ public class MysqlRunner implements SqlRunner {
                 "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&autoReconnect=true";
         String jdbc_driver;
         if(Config.bufferedReader!=null)
-            jdbc_driver = Config.getConfigOrDefault("sf.mysql.driver", "com.mysql.cj.jdbc.Driver");
+            jdbc_driver = Config.getConfigOrDefault("yfSql.mysql.driver", "com.mysql.cj.jdbc.Driver");
         else jdbc_driver = "com.mysql.cj.jdbc.Driver";
         try{
             Class.forName(jdbc_driver);

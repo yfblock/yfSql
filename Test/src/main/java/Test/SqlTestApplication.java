@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class SqlTestApplication {
     public static void main(String[] args) {
-        MysqlRunner mysqlRunner = new MysqlRunner("root", "root", "java-orm-test");
-        DataTableWrapper<CartView> cartViewDataTable = new DataTableWrapper<>(CartView.class, mysqlRunner);
+//        MysqlRunner mysqlRunner = new MysqlRunner("root", "root", "java-orm-test");
+//        DataTableWrapper<CartView> cartViewDataTable = new DataTableWrapper<>(CartView.class, mysqlRunner);
 
         // * select example
 //        ArrayList<CartView> cartViews = cartViewDataTable.select();
@@ -50,26 +50,27 @@ public class SqlTestApplication {
 //        for(Test test : testDataTableWrapper.where("id < 3").select()) {
 //            System.out.println(test.getTest1());
 //        }
-        TestWrapper testWrapper = new TestWrapper();
+
+//        TestWrapper testWrapper = new TestWrapper();
 //        for(Test test : testWrapper.getTestIdLess(3)) {
 //            System.out.println(test.getTest1());
 //        }
-        Test test = testWrapper.login("1", "2");
-        if(test != null) {
-            System.out.println(test.getId());
-            System.out.println(test.getTest2());
-        }
-        else System.out.println("未找到用户!");
+//        Test test = testWrapper.login("1", "2");
+//        if(test != null) {
+//            System.out.println(test.getId());
+//            System.out.println(test.getTest2());
+//        }
+//        else System.out.println("未找到用户!");
 
         UserWrapper userWrapper = new UserWrapper();
         // 增
         userWrapper.register("admins", "123");
         // 删
-        userWrapper.deleteUserById(25);
+//        userWrapper.deleteUserById(25);
         // 改
-        userWrapper.updateQQById("321", 10);
+//        userWrapper.updateQQById("321", 10);
         // 查
-        User user = userWrapper.login("admin", "21232f297a57a5a743894a0e4a801fc3");
-        if(user!=null) System.out.println(user.getId());
+//        User user = userWrapper.login("admin", "21232f297a57a5a743894a0e4a801fc3");
+//        if(user!=null) System.out.println(user.getId());
     }
 }

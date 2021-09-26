@@ -18,6 +18,8 @@ dependencies {
     // java-mysql-connector
     implementation 'mysql:mysql-connector-java:8.0.26'
 
+    implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
+
     // lombok
     implementation 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'

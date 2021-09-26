@@ -1,8 +1,9 @@
 package Test;
 
 import io.github.yfblock.yfSql.Annotation.*;
+import io.github.yfblock.yfSql.Runner.SqliteRunner;
 
-@DataRunner(username = "root", password = "root", database = "older")
+@DataRunner(path = "test.db", runner = SqliteRunner.class)
 public class UserWrapper {
 
     @Select("select * from user where username={0} and password={1}")
