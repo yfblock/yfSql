@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'io.github.yfblock'
-version '1.0.6-SNAPSHOT'
+version '1.0.6'
 
 ext {
     gitUrl  = 'https://github.com/yfblock/yfSql'
@@ -97,8 +97,8 @@ publishing {
                 ]
                 licenses {
                     license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        name = 'GPL-2.0'
+                        url = 'https://gitee.com/yfblock/yfSql/raw/master/LICENSE'
                     }
                 }
                 developers {
@@ -125,8 +125,8 @@ publishing {
                 url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
             }
             credentials {
-                username = "yufeng"
-                password = "200007017515aA.."
+                username = ossrhUsername
+                password = ossrhPassword
             }
         }
     }

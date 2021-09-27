@@ -3,8 +3,13 @@ package Test;
 import io.github.yfblock.yfSql.Annotation.*;
 import io.github.yfblock.yfSql.Runner.SqliteRunner;
 
-@DataRunner(database = "java-orm-test")
+import java.util.ArrayList;
+
+@DataRunner(runner = SqliteRunner.class, path = "test.db")
 public class UserWrapper {
+
+    @Select("select * from user")
+    public ArrayList<User> getUsers() {return null;}
 
     @Select("select * from user where username={0} and password={1}")
     public User login(String username, String password) {return null;}
