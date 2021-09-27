@@ -7,6 +7,7 @@ import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
 
 import javax.annotation.processing.Messager;
+import javax.tools.Diagnostic;
 import java.util.ArrayList;
 
 public class BaseTranslator extends TreeTranslator {
@@ -45,7 +46,16 @@ public class BaseTranslator extends TreeTranslator {
                 ));
                 continue;
             }
-            params.add(treeMaker.Ident(jcVariableDecl.getName()));
+            ArrayList<JCTree.JCExpression> args = new ArrayList<>();
+            args.add(treeMaker.Ident(jcVariableDecl.getName()));
+            params.add(
+                    treeMaker.Apply(
+                            List.nil(),
+                            treeMaker.Select(
+                                    treeMaker.Ident(names.fromString("ParamUtil")),
+                                    names.fromString("targetToString")
+                            ),
+                            List.from(args)));
         }
         super.visitMethodDef(tree);
     }

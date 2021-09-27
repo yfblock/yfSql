@@ -11,5 +11,5 @@ public class CartViewGroup {
     public ArrayList<CartView> getAll() { return null; }
 
     @Select("select * from cart_view where id={0}")
-    public CartView getCartViewById(int id) { return null; }
+    public CartView getCartViewById(Integer id) { return null; }
 }

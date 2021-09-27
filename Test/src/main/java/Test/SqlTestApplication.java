@@ -63,8 +63,9 @@ public class SqlTestApplication {
 //        else System.out.println("未找到用户!");
 
         UserWrapper userWrapper = new UserWrapper();
+        System.out.println(userWrapper.getUserByBalance(1200));
         // 增
-        userWrapper.register("admins", "123");
+//        userWrapper.register("admins", "123");
         // 删
 //        userWrapper.deleteUserById(25);
         // 改

@@ -12,6 +12,7 @@ import io.github.yfblock.yfSql.Annotation.*;
 import io.github.yfblock.yfSql.Runner.MysqlRunner;
 import io.github.yfblock.yfSql.Runner.SqlRunner;
 import io.github.yfblock.yfSql.Sql.DataTableWrapper;
+import io.github.yfblock.yfSql.Utils.ParamUtil;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -47,6 +48,7 @@ public class SelectProcessor extends AbstractProcessor {
             addClasses.add(MysqlRunner.class);
             addClasses.add(DataTableWrapper.class);
             addClasses.add(MessageFormat.class);
+            addClasses.add(ParamUtil.class);
             addImports(ele, addClasses);
             JCTree tree = (JCTree) trees.getTree(ele);
             tree.accept(dataRunnerTranslator);
