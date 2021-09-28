@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'io.github.yfblock'
-version '1.0.6'
+version '1.0.7'
 
 ext {
     gitUrl  = 'https://github.com/yfblock/yfSql'
@@ -90,7 +90,7 @@ publishing {
                 name = rootProject.name
                 description = 'yfSql'
                 packaging = 'jar'
-                url = rootProject.ext.gitUrl
+                url = project.ext.gitUrl
                 properties = [
                         myProp: "value",
                         "prop.with.dots": "anotherValue"
@@ -111,7 +111,7 @@ publishing {
                 scm {
                     connection = 'scm:git:git@github.com:yfblock/yfSql.git'
                     developerConnection = 'scm:git:ssh://github.com/yfblock/yfSql.git'
-                    url = rootProject.ext.gitUrl
+                    url = project.ext.gitUrl
                 }
             }
         }

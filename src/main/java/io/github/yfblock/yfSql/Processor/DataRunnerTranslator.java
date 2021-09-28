@@ -1,10 +1,13 @@
 package io.github.yfblock.yfSql.Processor;
 
 import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeTranslator;
 import com.sun.tools.javac.util.List;
+import com.sun.tools.javac.util.ListBuffer;
+import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 import io.github.yfblock.yfSql.Annotation.DataRunner;
 import io.github.yfblock.yfSql.Runner.MysqlRunner;
@@ -36,7 +39,51 @@ public class DataRunnerTranslator extends TreeTranslator {
         super.visitClassDef(tree);
 
         JCTree.JCVariableDecl jcVariableDecl = addSqlRunner();
+        if(jcVariableDecl.init == null) tree.defs = tree.defs.append(addConstructor());
+        else tree.defs = tree.defs.append(addBlankConstructor());
         tree.defs = tree.defs.prepend(jcVariableDecl);
+    }
+
+    private JCTree.JCMethodDecl addBlankConstructor() {
+        return treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.GENERATEDCONSTR | Flags.PUBLIC),
+                names.init,
+                null,
+                List.nil(),
+                List.nil(),
+                List.nil(),
+                treeMaker.Block(0, List.nil()),
+                null
+        );
+    }
+
+
+    private JCTree.JCMethodDecl addConstructor() {
+        // params List
+        ArrayList<JCTree.JCVariableDecl> params = new ArrayList<>();
+        params.add(treeMaker.VarDef(
+                treeMaker.Modifiers(Flags.PARAMETER),
+                names.fromString("sqlRunner"),
+                treeMaker.Ident(names.fromString("SqlRunner")),
+                null));
+
+        // code block
+        ListBuffer<JCTree.JCStatement> statements = new ListBuffer<>();
+        Name classParam = names.fromString("sqlRunner");
+        statements.add(treeMaker.Exec(treeMaker.Assign(treeMaker.Select(treeMaker.Ident(names.fromString("this")),classParam),
+                treeMaker.Ident(classParam))));
+        JCTree.JCBlock body = treeMaker.Block(0, statements.toList());
+
+        return treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.GENERATEDCONSTR | Flags.PUBLIC),
+                names.init,
+                null,
+                List.nil(),
+                List.from(params),
+                List.nil(),
+                body,
+                null
+        );
     }
 
     /**
@@ -44,6 +91,15 @@ public class DataRunnerTranslator extends TreeTranslator {
      * @return
      */
     private JCTree.JCVariableDecl addSqlRunner() {
+        if(dataRunner.database().equals("")&&dataRunner.path().equals("")) {
+            // if don't set anything, then only add the field
+            return treeMaker.VarDef(
+                    treeMaker.Modifiers(Flags.PRIVATE),
+                    names.fromString("sqlRunner"),
+                    treeMaker.Ident(names.fromString("SqlRunner")),
+                    null);
+        }
+
         ArrayList<JCTree.JCExpression> args = new ArrayList<>();
 
         String runnerSimpleName = null;

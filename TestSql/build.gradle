@@ -2,18 +2,17 @@ plugins {
     id 'java'
 }
 
-group 'io.github.yfblock'
+group 'Test'
 version '1.0-SNAPSHOT'
 
 repositories {
     maven { url 'https://maven.aliyun.com/repository/public/' }
-    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    implementation project(':')
-    annotationProcessor project(':')
+    implementation project(':yfSql')
+    annotationProcessor project(':yfSql')
 
     // java-mysql-connector
     implementation 'mysql:mysql-connector-java:8.0.26'
@@ -23,5 +22,8 @@ dependencies {
     // lombok
     implementation 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
+}
 
+test {
+    useJUnitPlatform()
 }

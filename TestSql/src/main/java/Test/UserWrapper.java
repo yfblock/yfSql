@@ -5,7 +5,7 @@ import io.github.yfblock.yfSql.Runner.SqliteRunner;
 
 import java.util.ArrayList;
 
-@DataRunner(runner = SqliteRunner.class, path = "test.db")
+@DataRunner(database = "java-orm-test")
 public class UserWrapper {
 
     @Select("select * from user")
@@ -17,8 +17,8 @@ public class UserWrapper {
     @Insert("insert into user (username, password) VALUES ({0}, {1})")
     public Integer register(String username, String password) { return 0;}
 
-    @Update("update user set qq={0} where id={1}")
-    public void updateQQById(String qq, int id){}
+//    @Update("update user set qq={0} where id={1}")
+//    public void updateQQById(String qq, int id){}
 
     @Delete("delete from user where id={0}")
     public void deleteUserById(int id){}
