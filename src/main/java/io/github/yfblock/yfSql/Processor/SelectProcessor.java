@@ -20,6 +20,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Set;
@@ -37,7 +38,10 @@ public class SelectProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        Messager messager = processingEnv.getMessager();
+
+        ProcessingEnvironment unwrapProcEnv = jbUnwrap(ProcessingEnvironment.class, processingEnv);
+
+        Messager messager = unwrapProcEnv.getMessager();
 
         // ? handle the DataRunner target
         for (Element ele : roundEnvironment.getElementsAnnotatedWith(DataRunner.class)) {
@@ -89,12 +93,18 @@ public class SelectProcessor extends AbstractProcessor {
     }
 
     @Override
-    public synchronized void init(ProcessingEnvironment processingEnvironment) {
-        super.init(processingEnvironment);
+    public synchronized void init(ProcessingEnvironment procEnv) {
+        super.init(procEnv);
 
-        trees = Trees.instance(processingEnvironment);
-        mMessager = processingEnvironment.getMessager();
-        Context context = ((JavacProcessingEnvironment) processingEnvironment).getContext();
+        // 包含以便于 idea 设置
+        ProcessingEnvironment unwrapProcEnv = jbUnwrap(ProcessingEnvironment.class, procEnv);
+        procEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, String.format(
+                "You aren't using a compiler supported by lombok, so lombok will not work and has been disabled.\n" +
+                        "Your processor is: %s\n", unwrapProcEnv.getClass().getName()));
+
+        trees = Trees.instance(unwrapProcEnv);
+        mMessager = unwrapProcEnv.getMessager();
+        Context context = ((JavacProcessingEnvironment) unwrapProcEnv).getContext();
         treeMaker = TreeMaker.instance(context);
         names = Names.instance(context);
     }
@@ -134,4 +144,16 @@ public class SelectProcessor extends AbstractProcessor {
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.latestSupported();
     }
+
+    private static <T> T jbUnwrap(Class<? extends T> iface, T wrapper) {
+        T unwrapped = null;
+        try {
+            final Class<?> apiWrappers = wrapper.getClass().getClassLoader().loadClass("org.jetbrains.jps.javac.APIWrappers");
+            final Method unwrapMethod = apiWrappers.getDeclaredMethod("unwrap", Class.class, Object.class);
+            unwrapped = iface.cast(unwrapMethod.invoke(null, iface, wrapper));
+        }
+        catch (Throwable ignored) {}
+        return unwrapped != null? unwrapped : wrapper;
+    }
+
 }
