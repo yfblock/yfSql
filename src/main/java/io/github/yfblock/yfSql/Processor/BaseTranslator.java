@@ -10,7 +10,8 @@ import javax.annotation.processing.Messager;
 import javax.tools.Diagnostic;
 import java.util.ArrayList;
 
-public class BaseTranslator extends TreeTranslator {
+public class
+BaseTranslator extends TreeTranslator {
     protected final Messager messager;
     protected final TreeMaker treeMaker;
     protected final Names names;
