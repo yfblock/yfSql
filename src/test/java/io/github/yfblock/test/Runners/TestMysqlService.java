@@ -1,14 +1,16 @@
 package io.github.yfblock.test.Runners;
 
-import io.github.yfblock.test.Bean.News;
+import io.github.yfblock.test.Bean.New;
 import io.github.yfblock.test.Bean.User;
 import io.github.yfblock.yfSql.Annotation.DataRunner;
 import io.github.yfblock.yfSql.Annotation.Select;
 
 import java.util.List;
 
-@DataRunner()
+@DataRunner(database = "uav")
 public class TestMysqlService {
+
+//    private SqlRunner sqlRunner;
 
     @Select("select * from user")
     public List<User> getUsers() {
@@ -16,7 +18,7 @@ public class TestMysqlService {
     }
 
     @Select("select * from news")
-    public List<News> getNews() {
+    public List<New> getNews() {
         return null;
     }
 }
