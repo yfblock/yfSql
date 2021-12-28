@@ -30,6 +30,15 @@ sourceSets {
 dependencies {
     // 多版本兼容文件
     java11Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava }
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    testAnnotationProcessor project(":")
+
+    testImplementation 'org.projectlombok:lombok:1.18.22'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+    testImplementation 'mysql:mysql-connector-java:8.0.27'
 }
 
 
@@ -63,7 +72,6 @@ jar {
         )
     }
 }
-
 
 java {
     withJavadocJar()

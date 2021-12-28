@@ -1,3 +1,0 @@
-rootProject.name = 'TestSql'
-include ":yfSql"
-project(":yfSql").projectDir = new File(rootDir, "../")
