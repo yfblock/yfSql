@@ -10,15 +10,15 @@
 <dependency>
   <groupId>io.github.yfblock</groupId>
   <artifactId>yfSql</artifactId>
-  <version>1.0.6</version>
+  <version>1.0.8</version>
 </dependency>
 ```
 
 ##### 使用gradle方式安装
 
 ```groovy
-implementation 'io.github.yfblock:yfSql:1.0.6'
-annotationProcessor 'io.github.yfblock:yfSql:1.0.6'
+implementation 'io.github.yfblock:yfSql:1.0.8'
+annotationProcessor 'io.github.yfblock:yfSql:1.0.8'
 
 ```
 
