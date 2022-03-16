@@ -5,6 +5,7 @@ import io.github.yfblock.test.Bean.User;
 import io.github.yfblock.yfSql.Annotation.DataRunner;
 import io.github.yfblock.yfSql.Annotation.Select;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @DataRunner(database = "uav")
@@ -21,4 +22,10 @@ public class TestMysqlService {
     public List<New> getNews() {
         return null;
     }
+
+    @Select("select count(*) as count from news")
+    public Integer getCount() {return null;}
+
+    @Select("select title from news")
+    public ArrayList<String> getTitles() { return null; }
 }

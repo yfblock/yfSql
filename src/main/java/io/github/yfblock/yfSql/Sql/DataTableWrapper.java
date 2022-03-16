@@ -301,6 +301,50 @@ public class DataTableWrapper<T> {
         return null;
     }
 
+    /**
+     * execute sql query one time
+     * @param sqlString sql string will be query
+     * @param targetClass result type
+     * @param sqlRunner sqlRunner
+     * @param <Y> targetType
+     * @return result
+     */
+    public static<Y> Y executeQueryOneFieldFind(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) {
+        System.out.println("executeQuery: " + sqlString);
+        ResultSet resultSet = sqlRunner.executeQuery(sqlString);
+        try {
+
+            if (resultSet.next()) {
+                return resultSet.getObject(1, targetClass);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * execute sql query one time
+     * @param sqlString sql string will be query
+     * @param targetClass result type
+     * @param sqlRunner sqlRunner
+     * @param <Y> targetType
+     * @return result
+     */
+    public static<Y> ArrayList<Y> executeQueryOneField(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) {
+        System.out.println("executeQuery: " + sqlString);
+        ResultSet resultSet = sqlRunner.executeQuery(sqlString);
+        try {
+            ArrayList<Y> targets = new ArrayList<>();
+            while (resultSet.next()) {
+                targets.add(resultSet.getObject(1, targetClass));
+            }
+            return targets;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     /**
      * execute sql, if it is insert, then will return the primary key of the object has been inserted

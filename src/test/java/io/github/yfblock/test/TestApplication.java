@@ -15,6 +15,11 @@ public class TestApplication {
         for(New n : news) {
             System.out.println(n);
         }
+        System.out.println(testMysqlService.getCount());
+        List<String> titles = testMysqlService.getTitles();
+        for(String n : titles) {
+            System.out.println(n);
+        }
 //        TestService testService = new TestService();
 //        List<User> users = testService.getUsers();
 //        System.out.println(users);

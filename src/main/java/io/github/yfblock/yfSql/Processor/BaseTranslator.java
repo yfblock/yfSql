@@ -5,6 +5,7 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeTranslator;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
+import io.github.yfblock.yfSql.Utils.ParamUtil;
 
 import javax.annotation.processing.Messager;
 import javax.tools.Diagnostic;
@@ -18,6 +19,7 @@ BaseTranslator extends TreeTranslator {
     protected ArrayList<JCTree.JCExpression> params = new ArrayList<>();
     protected String typeName;
     protected boolean isSingle = false;
+    protected boolean isOneField = false;
 
     public BaseTranslator(Messager messager, TreeMaker treeMaker, Names names) {
         this.messager = messager;
@@ -30,9 +32,11 @@ BaseTranslator extends TreeTranslator {
         String returnTypeName = tree.getReturnType().toString();
         if (returnTypeName.contains("<")) {
             typeName = returnTypeName.substring(returnTypeName.indexOf('<') + 1, returnTypeName.indexOf('>'));
+            isOneField = ParamUtil.isBasicType(typeName);
             isSingle = false;
         } else {
             typeName = returnTypeName;
+            isOneField = ParamUtil.isBasicType(returnTypeName);
             isSingle = true;
         }
         for (JCTree.JCVariableDecl jcVariableDecl : tree.getParameters()) {

@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'io.github.yfblock'
-version '1.0.9-SNAPSHOT'
+version '1.0.10-SNAPSHOT'
 
 ext {
     gitUrl  = 'https://github.com/yfblock/yfSql'

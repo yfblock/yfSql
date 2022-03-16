@@ -28,6 +28,11 @@ public class SelectTranslator extends BaseTranslator {
         super.visitBlock(jcBlock);
         ArrayList<JCTree.JCStatement> newList   = new ArrayList<>();
         ArrayList<JCTree.JCExpression> args     = new ArrayList<>();
+
+        // function choose
+        String functionName = isOneField?"executeQueryOneField":"executeQuery";
+        functionName += isSingle?"Find":"";
+
         // * first param
         if(params.size() > 0) {
             params.add(0, treeMaker.Literal(select.value()));
@@ -46,7 +51,7 @@ public class SelectTranslator extends BaseTranslator {
                                 List.nil(),
                                 treeMaker.Select(
                                         treeMaker.Ident(names.fromString("DataTableWrapper")),
-                                        names.fromString(isSingle?"executeQueryFind":"executeQuery")
+                                        names.fromString(functionName)
                                 ),
                                 List.from(args)
                         )
