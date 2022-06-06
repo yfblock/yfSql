@@ -10,15 +10,15 @@
 <dependency>
   <groupId>io.github.yfblock</groupId>
   <artifactId>yfSql</artifactId>
-  <version>1.0.9</version>
+  <version>1.0.10</version>
 </dependency>
 ```
 
 ##### 使用gradle方式安装
 
 ```groovy
-implementation 'io.github.yfblock:yfSql:1.0.8'
-annotationProcessor 'io.github.yfblock:yfSql:1.0.8'
+implementation 'io.github.yfblock:yfSql:1.0.10'
+annotationProcessor 'io.github.yfblock:yfSql:1.0.10'
 
 ```
 
@@ -27,28 +27,6 @@ annotationProcessor 'io.github.yfblock:yfSql:1.0.8'
 ​	此数据库操作库仅仅提供操作接口  需要再添加数据库依赖，内置支持mysql和sqlite
 
 ### 三、设置数据库
-
-##### xml方式
-
-首先需要在数据库操作Wrapper类中设置注解
-
-```java
-@DataRunner(useProperty = true)
-public class UserWrapper {
-	
-}
-```
-
-然后再application.properties中添加
-
-```properties
-yf.mysql.host=localhost					// 数据库连接地址
-yf.mysql.port=3306						// 端口
-yf.mysql.username=root					// 用户名
-yf.mysql.password=root					// 密码
-yf.mysql.database=java-orm-test			// 数据库名称
-yfSql.mysql.driver=com.mysql.cj.jdbc.Driver		// jdbc驱动，为支持5和8 缺省为com.mysql.cj.jdbc.Driver 可选
-```
 
 ##### 注解方式
 
@@ -132,6 +110,26 @@ User user = userWrapper.login("admin", "21232f297a57a5a743894a0e4a801fc3");
 if(user!=null) System.out.println(user.getId());
 
 ArrayList<User> users = userWrapper.getUsers();
+```
+
+###### 异常抛出
+> 默认情况下异常将由框架进行出来
+> 
+> 如果需要进行异常抛出 可在wrapper中加入throws 目前只支持SQLException
+> 
+> 如下
+
+```java
+import java.sql.SQLException;
+
+@DataRunner(runner = SqliteRunner.class, path = "test.db")
+public class UserWrapper {
+
+    @Select("select * from user")
+    public ArrayList<User> getUsers() throws SQLException {
+        return null;
+    }
+}
 ```
 
 ##### 五、链式操作方式
