@@ -174,7 +174,7 @@ public class OrmHandler<T> {
      * @return the database name corresponding to class
      */
     public String getClassRelationalName() {
-        // if has DataTable annotation, then return the annotation value
+        // if it has DataTable annotation, then return the annotation value
         DataTable dataTable = this.targetClass.getAnnotation(DataTable.class);
         if(dataTable != null) return dataTable.value();
         // else return the name by building

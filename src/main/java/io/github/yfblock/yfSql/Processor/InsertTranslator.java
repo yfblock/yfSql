@@ -1,19 +1,11 @@
 package io.github.yfblock.yfSql.Processor;
 
-import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
-import com.sun.tools.javac.tree.TreeTranslator;
-
-import javax.annotation.processing.Messager;
-import javax.tools.Diagnostic;
-import com.sun.tools.javac.util.List;
-import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 import io.github.yfblock.yfSql.Annotation.Insert;
-import io.github.yfblock.yfSql.Annotation.Select;
 
-import java.util.ArrayList;
+import javax.annotation.processing.Messager;
 
 public class InsertTranslator extends BaseTranslator {
 
@@ -30,31 +22,20 @@ public class InsertTranslator extends BaseTranslator {
     @Override
     public void visitBlock(JCTree.JCBlock jcBlock) {
         super.visitBlock(jcBlock);
-        ArrayList<JCTree.JCStatement> newList   = new ArrayList<>();
-        ArrayList<JCTree.JCExpression> args     = new ArrayList<>();
+
+        String functionName = "execute";
+
         // * first param
-        if(params.size() > 0) {
-            params.add(0, treeMaker.Literal(insert.value()));
-            JCTree.JCMethodInvocation param = treeMaker.Apply(List.nil(),
-                    treeMaker.Select(treeMaker.Ident(names.fromString("MessageFormat")), names.fromString("format")),
-                    List.from(params));
-            args.add(param);
+        if (catches.length() > 0) {
+            JCTree.JCTry jcTry = this.generateTryCatch(
+                    this.generateTryBlock(insert.value(), functionName),
+                    this.catches,
+                    treeMaker.Block(0, jcBlock.stats)
+            );
+
+            jcBlock.stats = jcBlock.stats.prepend(jcTry);
         } else {
-            args.add(treeMaker.Literal(insert.value()));
+            jcBlock.stats = this.generateTryBlock(insert.value(), functionName).stats;
         }
-        args.add(treeMaker.Ident(names.fromString("sqlRunner")));
-        newList.add(
-                treeMaker.Return(
-                        treeMaker.Apply(
-                                List.nil(),
-                                treeMaker.Select(
-                                        treeMaker.Ident(names.fromString("DataTableWrapper")),
-                                        names.fromString("execute")
-                                ),
-                                List.from(args)
-                        )
-                )
-        );
-        jcBlock.stats = List.from(newList);
     }
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'io.github.yfblock'
-version '1.0.10-SNAPSHOT'
+version '1.0.10'
 
 ext {
     gitUrl  = 'https://github.com/yfblock/yfSql'
@@ -26,10 +26,11 @@ sourceSets {
     }
 }
 
-
 dependencies {
     // 多版本兼容文件
-    compile files("${System.properties['java.home']}/../lib/tools.jar")
+    implementation files("${System.properties['java.home']}/../lib/tools.jar")
+
+    System.properties['java.home']
 
     java11Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava }
 
@@ -38,9 +39,10 @@ dependencies {
 
     testAnnotationProcessor project(":")
 
-    testImplementation 'org.projectlombok:lombok:1.18.22'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
-    testImplementation 'mysql:mysql-connector-java:8.0.27'
+    testImplementation 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+    testImplementation 'mysql:mysql-connector-java:8.0.29'
+    testImplementation 'org.xerial:sqlite-jdbc:3.36.0.3'
 }
 
 

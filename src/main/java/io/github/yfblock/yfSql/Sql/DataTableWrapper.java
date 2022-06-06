@@ -35,7 +35,7 @@ public class DataTableWrapper<T> {
      * * construct the wrapper
      *
      * @param targetClass the target will be set
-     * @param sqlRunner   the runner will used to query sql
+     * @param sqlRunner   the runner will be used to query sql
      */
     public DataTableWrapper(Class<T> targetClass, SqlRunner sqlRunner) {
         this.ormHandler = new OrmHandler<>(targetClass);
@@ -253,52 +253,19 @@ public class DataTableWrapper<T> {
      * @param <Y> targetType
      * @return results
      */
-    public static<Y> ArrayList<Y> executeQuery(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) {
-        try {
-            OrmHandler<Y> ormHandler = new OrmHandler<>(targetClass);
-            System.out.println("executeQuery: " + sqlString);
-            ResultSet resultSet = sqlRunner.executeQuery(sqlString);
-            ArrayList<Y> targets = new ArrayList<>();
-            while (resultSet.next()) {
-                ormHandler.newTarget();
-                for (String relationalKey : ormHandler.params.values()) {
-                    ormHandler.setRelationalKeyValue(relationalKey, resultSet.getObject(relationalKey));
-                }
-                targets.add(ormHandler.getTarget());
-            }
-            return targets;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * execute sql query one time
-     * @param sqlString sql string will be query
-     * @param targetClass result type
-     * @param sqlRunner sqlRunner
-     * @param <Y> targetType
-     * @return result
-     */
-    public static<Y> Y executeQueryFind(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) {
+    public static<Y> ArrayList<Y> executeQuery(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) throws SQLException {
         OrmHandler<Y> ormHandler = new OrmHandler<>(targetClass);
         System.out.println("executeQuery: " + sqlString);
         ResultSet resultSet = sqlRunner.executeQuery(sqlString);
-        try {
-            if (resultSet.next()) {
-                ormHandler.newTarget();
-                for (String relationalKey : ormHandler.params.values()) {
-                    try{
-                        ormHandler.setRelationalKeyValue(relationalKey, resultSet.getObject(relationalKey));
-                    } catch (SQLException ignored) { }
-                }
-                return ormHandler.getTarget();
+        ArrayList<Y> targets = new ArrayList<>();
+        while (resultSet.next()) {
+            ormHandler.newTarget();
+            for (String relationalKey : ormHandler.params.values()) {
+                ormHandler.setRelationalKeyValue(relationalKey, resultSet.getObject(relationalKey));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            targets.add(ormHandler.getTarget());
         }
-        return null;
+        return targets;
     }
 
     /**
@@ -309,41 +276,54 @@ public class DataTableWrapper<T> {
      * @param <Y> targetType
      * @return result
      */
-    public static<Y> Y executeQueryOneFieldFind(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) {
+    public static<Y> Y executeQueryFind(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) throws SQLException {
+        OrmHandler<Y> ormHandler = new OrmHandler<>(targetClass);
         System.out.println("executeQuery: " + sqlString);
         ResultSet resultSet = sqlRunner.executeQuery(sqlString);
-        try {
-
-            if (resultSet.next()) {
-                return resultSet.getObject(1, targetClass);
+        if (resultSet.next()) {
+            ormHandler.newTarget();
+            for (String relationalKey : ormHandler.params.values()) {
+                ormHandler.setRelationalKeyValue(relationalKey, resultSet.getObject(relationalKey));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return ormHandler.getTarget();
+        }
+        return null;
+    }
+
+    /**
+     * execute sql query once
+     * @param sqlString sql string will be queried
+     * @param targetClass result type
+     * @param sqlRunner sqlRunner
+     * @param <Y> targetType
+     * @return result
+     */
+    public static<Y> Y executeQueryOneFieldFind(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) throws SQLException {
+        System.out.println("executeQuery: " + sqlString);
+        ResultSet resultSet = sqlRunner.executeQuery(sqlString);
+        // Return if there is data
+        if (resultSet.next()) {
+            return (Y) resultSet.getObject(1);
         }
         return null;
     }
 
     /**
      * execute sql query one time
-     * @param sqlString sql string will be query
+     * @param sqlString sql string will be queried
      * @param targetClass result type
      * @param sqlRunner sqlRunner
      * @param <Y> targetType
      * @return result
      */
-    public static<Y> ArrayList<Y> executeQueryOneField(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) {
+    public static<Y> ArrayList<Y> executeQueryOneField(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) throws SQLException {
         System.out.println("executeQuery: " + sqlString);
         ResultSet resultSet = sqlRunner.executeQuery(sqlString);
-        try {
-            ArrayList<Y> targets = new ArrayList<>();
-            while (resultSet.next()) {
-                targets.add(resultSet.getObject(1, targetClass));
-            }
-            return targets;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        ArrayList<Y> targets = new ArrayList<>();
+        while (resultSet.next()) {
+            targets.add(resultSet.getObject(1, targetClass));
         }
-        return null;
+        return targets;
     }
 
     /**
