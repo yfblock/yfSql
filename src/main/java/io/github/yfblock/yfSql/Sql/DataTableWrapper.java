@@ -42,6 +42,7 @@ public class DataTableWrapper<T> {
      * @param targetClass result type
      * @param sqlRunner sqlRunner
      * @param <Y> targetType
+     * @throws SQLException sql execute exception
      * @return results
      */
     public static<Y> ArrayList<Y> executeQuery(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) throws SQLException {
@@ -65,6 +66,7 @@ public class DataTableWrapper<T> {
      * @param targetClass result type
      * @param sqlRunner sqlRunner
      * @param <Y> targetType
+     * @throws SQLException sql execute exception
      * @return result
      */
     public static<Y> Y executeQueryFind(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) throws SQLException {
@@ -87,6 +89,7 @@ public class DataTableWrapper<T> {
      * @param targetClass result type
      * @param sqlRunner sqlRunner
      * @param <Y> targetType
+     * @throws SQLException sql execute exception
      * @return result
      */
     public static<Y> Y executeQueryOneFieldFind(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) throws SQLException {
@@ -105,6 +108,7 @@ public class DataTableWrapper<T> {
      * @param targetClass result type
      * @param sqlRunner sqlRunner
      * @param <Y> targetType
+     * @throws SQLException sql execute exception
      * @return result
      */
     public static<Y> ArrayList<Y> executeQueryOneField(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) throws SQLException {
@@ -122,16 +126,13 @@ public class DataTableWrapper<T> {
      * execute sql, if it is insert, then will return the primary key of the object has been inserted
      * @param sqlString the sql will be executed
      * @param sqlRunner sqlRunner
+     * @throws SQLException sql execute exception
      * @return execute result or the key of the insert
      */
-    public static int execute(String sqlString, SqlRunner sqlRunner) {
-        try {
-            System.out.println("execute: " + sqlString);
-            ResultSet resultSet = sqlRunner.executeQuery(sqlString);
-            if (resultSet != null && resultSet.next()) return resultSet.getInt(1);
-        } catch (SQLException throwable) {
-            throwable.printStackTrace();
-        }
+    public static int execute(String sqlString, SqlRunner sqlRunner) throws SQLException {
+        System.out.println("execute: " + sqlString);
+        ResultSet resultSet = sqlRunner.executeQuery(sqlString);
+        if (resultSet != null && resultSet.next()) return resultSet.getInt(1);
         return 0;
     }
 
