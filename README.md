@@ -10,15 +10,15 @@
 <dependency>
   <groupId>io.github.yfblock</groupId>
   <artifactId>yfSql</artifactId>
-  <version>1.0.10</version>
+  <version>1.0.11</version>
 </dependency>
 ```
 
 ##### 使用gradle方式安装
 
 ```groovy
-implementation 'io.github.yfblock:yfSql:1.0.10'
-annotationProcessor 'io.github.yfblock:yfSql:1.0.10'
+implementation 'io.github.yfblock:yfSql:1.0.11'
+annotationProcessor 'io.github.yfblock:yfSql:1.0.11'
 
 ```
 
@@ -53,6 +53,7 @@ public class UserWrapper {
 package Test;
 
 import lombok.Data;
+import io.github.yfblock.yfSql.Annotation.DataField;
 
 @Data
 public class User {
@@ -60,7 +61,9 @@ public class User {
     private String username;
     private String password;
     private String qq;
-    private String phone;
+    // 如果java中的属性名与数据库中不对应， 则可以使用DataField注解
+    @DataField("phone")
+    private String userPhone;
 }
 
 ```
@@ -134,59 +137,7 @@ public class UserWrapper {
 
 ##### 五、链式操作方式
 
-> 链式操作时仅可同时操作单个数据表
-
-CartView.java
-
-```java
-@Data
-public class CartView {
-    private Integer id;                 // 购物车记录编号
-    private Integer goodId;             // 商品编号
-    private Integer userId;             // 用户编号
-    private Integer number;             // 购买数量
-    private String cover;               // 商品封面
-    private String name;                // 商品名称
-    private Double price;               // 商品单价
-}
-
-```
-
-调用
-
-```java
-MysqlRunner mysqlRunner = new MysqlRunner("root", "root", "java-orm-test");
-DataTableWrapper<CartView> cartViewDataTable = new DataTableWrapper<>(CartView.class, mysqlRunner);
-
-// * select example
-ArrayList<CartView> cartViews = cartViewDataTable.select();
-for(CartView cartView : cartViews) {
-    System.out.println(cartView.getName());
-}
-
-// * add example
-CartView cartView = new CartView();
-cartView.setName("Hello");
-cartView.setNumber(12);
-cartView.setPrice(30.0);
-cartViewDataTable.add(cartView);
-
-// * find and update example
-cartView = cartViewDataTable.where("name", "Hello").find();
-cartView.setPrice(20.0);
-cartViewDataTable.where("name", "Hello").update(cartView);
-
-// * count example
-int count = cartViewDataTable.count();
-System.out.println("Count: " + count);
-
-// * delete example
-cartViewDataTable.where("name", "Hello").delete();
-
-// * custom select example
-cartViews =
-    DataTableWrapper.executeQuery("select * from cart_view", CartView.class, mysqlRunner);
-```
+> 暂时取消链式操作
 
 ### 六、开发计划
 

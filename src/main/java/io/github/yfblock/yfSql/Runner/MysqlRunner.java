@@ -1,7 +1,5 @@
 package io.github.yfblock.yfSql.Runner;
 
-import io.github.yfblock.yfSql.Config.Config;
-
 import java.sql.*;
 
 /**
@@ -10,17 +8,6 @@ import java.sql.*;
  */
 public class MysqlRunner implements SqlRunner {
     private Connection conn = null;
-
-    /**
-     * Constructor, init mysql connection
-     */
-    public MysqlRunner() {
-        this(Config.getConfigOrDefault("yfSql.mysql.host", "localhost"),
-                Config.getConfigOrDefault("yfSql.mysql.port", "3306"),
-                Config.getConfig("yfSql.mysql.username"),
-                Config.getConfig("yfSql.mysql.password"),
-                Config.getConfig("yfSql.mysql.database"));
-    }
 
     /**
      * Constructor, init mysql connection
@@ -43,10 +30,7 @@ public class MysqlRunner implements SqlRunner {
     public MysqlRunner(String host, String port, String username, String password, String database) {
         String connUrl = "jdbc:mysql://"+host+":"+port+"/"+database+
                 "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&autoReconnect=true";
-        String jdbc_driver;
-        if(Config.bufferedReader!=null)
-            jdbc_driver = Config.getConfigOrDefault("yfSql.mysql.driver", "com.mysql.cj.jdbc.Driver");
-        else jdbc_driver = "com.mysql.cj.jdbc.Driver";
+        String jdbc_driver = "com.mysql.cj.jdbc.Driver";
         try{
             Class.forName(jdbc_driver);
             this.conn = DriverManager.getConnection(connUrl, username, password);

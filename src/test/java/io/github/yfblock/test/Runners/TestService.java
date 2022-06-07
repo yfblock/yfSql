@@ -15,7 +15,7 @@ public class TestService {
 
 //    private SqlRunner sqlRunner;
 
-    @Select("select *, y1 from user")
+    @Select("select * from user")
     public List<User> getUsers() throws SQLException {
         return null;
     }

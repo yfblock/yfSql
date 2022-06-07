@@ -62,20 +62,11 @@ public class OrmHandler<T> {
      */
     public String getFieldRelationalName(Field field) {
         StringBuilder stringBuilder = new StringBuilder();
-        // if has dataField annotation then return annotation value
+        // if it has dataField annotation then return annotation value
         DataField dataField = field.getAnnotation(DataField.class);
         if(dataField != null) return dataField.value();
-        // else return value according to humo naming
-        String paramName = field.getName();
-        for(char character : paramName.toCharArray()) {
-            if(Character.isUpperCase(character)) {
-                stringBuilder.append('_');
-                stringBuilder.append(Character.toLowerCase(character));
-            }else{
-                stringBuilder.append(character);
-            }
-        }
-        return stringBuilder.toString();
+        // else return value according to DataField
+        return field.getName();
     }
 
     /**
@@ -177,18 +168,7 @@ public class OrmHandler<T> {
         // if it has DataTable annotation, then return the annotation value
         DataTable dataTable = this.targetClass.getAnnotation(DataTable.class);
         if(dataTable != null) return dataTable.value();
-        // else return the name by building
-        String className = this.targetClass.getSimpleName();
-        StringBuilder classRelationalName = new StringBuilder();
-        classRelationalName.append(Character.toLowerCase(className.charAt(0)));
-        for(char character : className.substring(1).toCharArray()) {
-            if(Character.isUpperCase(character)) {
-                classRelationalName.append('_');
-                classRelationalName.append(Character.toLowerCase(character));
-            }else{
-                classRelationalName.append(character);
-            }
-        }
-        return classRelationalName.toString();
+        // else return the class name
+        return this.targetClass.getSimpleName();
     }
 }
