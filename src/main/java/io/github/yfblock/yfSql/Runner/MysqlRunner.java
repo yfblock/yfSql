@@ -45,15 +45,10 @@ public class MysqlRunner implements SqlRunner {
      * @return ResultSet
      */
     @Override
-    public ResultSet executeQuery(String sqlString) {
-        try {
-            PreparedStatement preparedStatement = this.conn.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.execute();
-            if (sqlString.trim().indexOf("insert") == 0) return preparedStatement.getGeneratedKeys();
-            else return preparedStatement.getResultSet();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+    public ResultSet executeQuery(String sqlString) throws SQLException {
+        PreparedStatement preparedStatement = this.conn.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.execute();
+        if (sqlString.trim().indexOf("insert") == 0) return preparedStatement.getGeneratedKeys();
+        else return preparedStatement.getResultSet();
     }
 }
