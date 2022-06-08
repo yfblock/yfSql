@@ -51,18 +51,14 @@ public class DataTableWrapper<T> {
         ResultSet resultSet = sqlRunner.executeQuery(sqlString);
         ArrayList<Y> targets = new ArrayList<>();
         while (resultSet.next()) {
-            ormHandler.newTarget();
-            for (String relationalKey : ormHandler.params.values()) {
-                ormHandler.setRelationalKeyValue(relationalKey, resultSet.getObject(relationalKey));
-            }
-            targets.add(ormHandler.getTarget());
+            targets.add(DataTableWrapper.updateOrmHandler(ormHandler, resultSet));
         }
         return targets;
     }
 
     /**
      * execute sql query one time
-     * @param sqlString sql string will be query
+     * @param sqlString sql string will be queried
      * @param targetClass result type
      * @param sqlRunner sqlRunner
      * @param <Y> targetType
@@ -74,13 +70,33 @@ public class DataTableWrapper<T> {
         System.out.println("executeQuery: " + sqlString);
         ResultSet resultSet = sqlRunner.executeQuery(sqlString);
         if (resultSet.next()) {
-            ormHandler.newTarget();
-            for (String relationalKey : ormHandler.params.values()) {
-                ormHandler.setRelationalKeyValue(relationalKey, resultSet.getObject(relationalKey));
-            }
-            return ormHandler.getTarget();
+            return DataTableWrapper.updateOrmHandler(ormHandler, resultSet);
         }
         return null;
+    }
+
+    /**
+     * update orm handler, store value of resultSet row
+     * @param ormHandler the orm handler will be updated
+     * @param resultSet the source of data value
+     * @return  new target
+     * @param <Y> target Class
+     * @throws SQLException sql exception
+     */
+    protected static<Y> Y updateOrmHandler(OrmHandler<Y> ormHandler, ResultSet resultSet) throws SQLException {
+        ormHandler.newTarget();
+        for (String relationalKey : ormHandler.params.values()) {
+            // result index
+            int index;
+            // find column, return index if it exists, else skip this column
+            try {
+                index = resultSet.findColumn(relationalKey);
+            } catch (SQLException e) {
+                continue;
+            }
+            ormHandler.setRelationalKeyValue(relationalKey, resultSet.getObject(index));
+        }
+        return ormHandler.getTarget();
     }
 
     /**
