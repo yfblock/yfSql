@@ -146,4 +146,22 @@ BaseTranslator extends TreeTranslator {
         );
         return treeMaker.Block(0, List.from(newList));
     }
+
+    /**
+     *  访问执行代码块
+     * */
+    protected void executeVisitBlock(JCTree.JCBlock jcBlock, String sql,String functionName) {
+        // * first param
+        if (catches.length() > 0) {
+            JCTree.JCTry jcTry = this.generateTryCatch(
+                    this.generateTryBlock(sql, functionName),
+                    this.catches,
+                    treeMaker.Block(0, jcBlock.stats)
+            );
+
+            jcBlock.stats = jcBlock.stats.prepend(jcTry);
+        } else {
+            jcBlock.stats = this.generateTryBlock(sql, functionName).stats;
+        }
+    }
 }

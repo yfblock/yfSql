@@ -27,16 +27,6 @@ public class SelectTranslator extends BaseTranslator {
         String functionName = isOneField?"executeQueryOneField":"executeQuery";
         functionName += isSingle?"Find":"";
 
-        if (catches.length() > 0) {
-            JCTree.JCTry jcTry = this.generateTryCatch(
-                    this.generateTryBlock(select.value(), functionName),
-                    this.catches,
-                    treeMaker.Block(0, jcBlock.stats)
-            );
-
-            jcBlock.stats = jcBlock.stats.prepend(jcTry);
-        } else {
-            jcBlock.stats = this.generateTryBlock(select.value(), functionName).stats;
-        }
+        super.executeVisitBlock(jcBlock, select.value(), functionName);
     }
 }

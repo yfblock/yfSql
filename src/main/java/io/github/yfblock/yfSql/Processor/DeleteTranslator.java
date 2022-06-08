@@ -22,19 +22,7 @@ public class DeleteTranslator extends BaseTranslator {
     @Override
     public void visitBlock(JCTree.JCBlock jcBlock) {
         super.visitBlock(jcBlock);
-        String functionName = "execute";
 
-        // * first param
-        if (catches.length() > 0) {
-            JCTree.JCTry jcTry = this.generateTryCatch(
-                    this.generateTryBlock(delete.value(), functionName),
-                    this.catches,
-                    treeMaker.Block(0, jcBlock.stats)
-            );
-
-            jcBlock.stats = jcBlock.stats.prepend(jcTry);
-        } else {
-            jcBlock.stats = this.generateTryBlock(delete.value(), functionName).stats;
-        }
+        super.executeVisitBlock(jcBlock, delete.value(), "execute");
     }
 }

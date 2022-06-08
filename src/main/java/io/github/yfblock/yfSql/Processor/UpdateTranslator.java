@@ -22,17 +22,7 @@ public class UpdateTranslator extends BaseTranslator {
     @Override
     public void visitBlock(JCTree.JCBlock jcBlock) {
         super.visitBlock(jcBlock);
-        String functionName = "execute";
-        if (catches.length() > 0) {
-            JCTree.JCTry jcTry = this.generateTryCatch(
-                    this.generateTryBlock(update.value(), functionName),
-                    this.catches,
-                    treeMaker.Block(0, jcBlock.stats)
-            );
 
-            jcBlock.stats = jcBlock.stats.prepend(jcTry);
-        } else {
-            jcBlock.stats = this.generateTryBlock(update.value(), functionName).stats;
-        }
+        super.executeVisitBlock(jcBlock, update.value(), "execute");
     }
 }
