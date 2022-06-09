@@ -26,6 +26,11 @@ public class OrmHandler<T> {
         try {
             this.targetClass = targetClass;
             for(Field field : targetClass.getDeclaredFields()) {
+                // TODO: if there has sub fields, then read them
+                DataTable dataTable = field.getAnnotation(DataTable.class);
+                if(dataTable != null) {
+                    // TODO: if it has the DataTable annotation, process
+                }
                 String targetName = this.getFieldRelationalName(field);
                 params.put(field.getName(), targetName);
                 relationalParams.put(targetName, field.getName());
