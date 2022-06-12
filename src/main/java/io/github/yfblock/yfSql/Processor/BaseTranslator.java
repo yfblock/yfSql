@@ -148,8 +148,11 @@ BaseTranslator extends TreeTranslator {
     }
 
     /**
-     *  访问执行代码块
-     * */
+     * 访问执行代码块
+     * @param jcBlock 代码块
+     * @param sql sql语句
+     * @param functionName 函数名称
+     */
     protected void executeVisitBlock(JCTree.JCBlock jcBlock, String sql,String functionName) {
         // * first param
         if (catches.length() > 0) {
