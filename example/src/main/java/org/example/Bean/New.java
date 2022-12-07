@@ -1,6 +1,5 @@
-package io.github.yfblock.test.Bean;
+package org.example.Bean;
 
-import io.github.yfblock.yfSql.Annotation.DataTable;
 import lombok.Data;
 
 import java.time.LocalDateTime;

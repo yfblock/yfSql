@@ -1,7 +1,6 @@
 package io.github.yfblock.yfSql.Annotation;
 
 import io.github.yfblock.yfSql.Runner.MysqlRunner;
-import io.github.yfblock.yfSql.Runner.SqlRunner;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

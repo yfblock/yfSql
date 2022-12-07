@@ -3,4 +3,5 @@
 build
 gradle
 gradle.properties
-out
+**/target
+**/*.iml

@@ -66,7 +66,6 @@ public class OrmHandler<T> {
      * @return database field name
      */
     public String getFieldRelationalName(Field field) {
-        StringBuilder stringBuilder = new StringBuilder();
         // if it has dataField annotation then return annotation value
         DataField dataField = field.getAnnotation(DataField.class);
         if(dataField != null) return dataField.value();
@@ -123,6 +122,7 @@ public class OrmHandler<T> {
      * @param value the value will be set
      */
     public void setKeyValue(String key, Object value) {
+        System.out.println("Current field is " + key);
         try {
             Method setter = this.paramSet.get(key);
             if(setter == null) return;

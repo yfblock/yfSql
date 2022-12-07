@@ -1,5 +1,6 @@
 package io.github.yfblock.yfSql.Processor;
 
+import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
@@ -19,12 +20,13 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
-import javax.tools.Diagnostic;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Set;
 
+
+@AutoService(javax.annotation.processing.Processor.class)
 @SupportedAnnotationTypes(value = {
         "io.github.yfblock.yfSql.Annotation.Select",
         "io.github.yfblock.yfSql.Annotation.DataRunner"
@@ -98,9 +100,9 @@ public class SelectProcessor extends AbstractProcessor {
 
         // 包含以便于 idea 设置
         ProcessingEnvironment unwrapProcEnv = jbUnwrap(ProcessingEnvironment.class, procEnv);
-        procEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, String.format(
-                "You aren't using a compiler supported by lombok, so lombok will not work and has been disabled.\n" +
-                        "Your processor is: %s\n", unwrapProcEnv.getClass().getName()));
+//        procEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, String.format(
+//                "You aren't using a compiler supported by lombok, so lombok will not work and has been disabled.\n" +
+//                        "Your processor is: %s\n", unwrapProcEnv.getClass().getName()));
 
         trees = Trees.instance(unwrapProcEnv);
         mMessager = unwrapProcEnv.getMessager();
