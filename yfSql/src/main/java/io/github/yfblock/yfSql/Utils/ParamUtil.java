@@ -1,10 +1,6 @@
 package io.github.yfblock.yfSql.Utils;
 
 public class ParamUtil {
-    public static String targetToString(Object obj) {
-        return obj.toString();
-    }
-
     public static boolean isBasicType(String typeName) {
         if(typeName == null) return false;
         if(typeName.equals("String")) return true;
