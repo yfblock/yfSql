@@ -10,15 +10,15 @@
 <dependency>
   <groupId>io.github.yfblock</groupId>
   <artifactId>yfSql</artifactId>
-  <version>1.0.9</version>
+  <version>1.0.12</version>
 </dependency>
 ```
 
 ##### 使用gradle方式安装
 
 ```groovy
-implementation 'io.github.yfblock:yfSql:1.0.8'
-annotationProcessor 'io.github.yfblock:yfSql:1.0.8'
+implementation 'io.github.yfblock:yfSql:1.0.12'
+annotationProcessor 'io.github.yfblock:yfSql:1.0.12'
 
 ```
 
@@ -27,28 +27,6 @@ annotationProcessor 'io.github.yfblock:yfSql:1.0.8'
 ​	此数据库操作库仅仅提供操作接口  需要再添加数据库依赖，内置支持mysql和sqlite
 
 ### 三、设置数据库
-
-##### xml方式
-
-首先需要在数据库操作Wrapper类中设置注解
-
-```java
-@DataRunner(useProperty = true)
-public class UserWrapper {
-	
-}
-```
-
-然后再application.properties中添加
-
-```properties
-yf.mysql.host=localhost					// 数据库连接地址
-yf.mysql.port=3306						// 端口
-yf.mysql.username=root					// 用户名
-yf.mysql.password=root					// 密码
-yf.mysql.database=java-orm-test			// 数据库名称
-yfSql.mysql.driver=com.mysql.cj.jdbc.Driver		// jdbc驱动，为支持5和8 缺省为com.mysql.cj.jdbc.Driver 可选
-```
 
 ##### 注解方式
 
@@ -75,6 +53,7 @@ public class UserWrapper {
 package Test;
 
 import lombok.Data;
+import io.github.yfblock.yfSql.Annotation.DataField;
 
 @Data
 public class User {
@@ -82,7 +61,9 @@ public class User {
     private String username;
     private String password;
     private String qq;
-    private String phone;
+    // 如果java中的属性名与数据库中不对应， 则可以使用DataField注解
+    @DataField("phone")
+    private String userPhone;
 }
 
 ```
@@ -134,61 +115,29 @@ if(user!=null) System.out.println(user.getId());
 ArrayList<User> users = userWrapper.getUsers();
 ```
 
+###### 异常抛出
+> 默认情况下异常将由框架进行出来
+> 
+> 如果需要进行异常抛出 可在wrapper中加入throws 目前只支持SQLException
+> 
+> 如下
+
+```java
+import java.sql.SQLException;
+
+@DataRunner(runner = SqliteRunner.class, path = "test.db")
+public class UserWrapper {
+
+    @Select("select * from user")
+    public ArrayList<User> getUsers() throws SQLException {
+        return null;
+    }
+}
+```
+
 ##### 五、链式操作方式
 
-> 链式操作时仅可同时操作单个数据表
-
-CartView.java
-
-```java
-@Data
-public class CartView {
-    private Integer id;                 // 购物车记录编号
-    private Integer goodId;             // 商品编号
-    private Integer userId;             // 用户编号
-    private Integer number;             // 购买数量
-    private String cover;               // 商品封面
-    private String name;                // 商品名称
-    private Double price;               // 商品单价
-}
-
-```
-
-调用
-
-```java
-MysqlRunner mysqlRunner = new MysqlRunner("root", "root", "java-orm-test");
-DataTableWrapper<CartView> cartViewDataTable = new DataTableWrapper<>(CartView.class, mysqlRunner);
-
-// * select example
-ArrayList<CartView> cartViews = cartViewDataTable.select();
-for(CartView cartView : cartViews) {
-    System.out.println(cartView.getName());
-}
-
-// * add example
-CartView cartView = new CartView();
-cartView.setName("Hello");
-cartView.setNumber(12);
-cartView.setPrice(30.0);
-cartViewDataTable.add(cartView);
-
-// * find and update example
-cartView = cartViewDataTable.where("name", "Hello").find();
-cartView.setPrice(20.0);
-cartViewDataTable.where("name", "Hello").update(cartView);
-
-// * count example
-int count = cartViewDataTable.count();
-System.out.println("Count: " + count);
-
-// * delete example
-cartViewDataTable.where("name", "Hello").delete();
-
-// * custom select example
-cartViews =
-    DataTableWrapper.executeQuery("select * from cart_view", CartView.class, mysqlRunner);
-```
+> 暂时取消链式操作
 
 ### 六、开发计划
 
