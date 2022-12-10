@@ -41,8 +41,9 @@ public class SelectProcessor extends AbstractProcessor {
                     System.out.println(vele.getSimpleName());
                     System.out.println(vele.asType());
                 }
-                System.out.println(subEle.asType().toString());
-                System.out.println(subEle.asType());
+//                System.out.println(subEle.asType().toString());
+//                System.out.println(subEle.asType());
+                System.out.println(functionEle.getReturnType());
             }
 
             if(!ele.getKind().equals(ElementKind.INTERFACE)) {
