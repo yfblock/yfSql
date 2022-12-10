@@ -4,10 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <name>yfSql</name>
     <groupId>io.github.yfblock</groupId>
     <artifactId>yfSql</artifactId>
-    <version>1.0.12</version>
+    <version>1.0.13</version>
     <packaging>jar</packaging>
+    <description>a simple java ORM framework for database, use annotation instead of xml</description>
+    <url>https://github.com/yfblock/yfSql</url>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -22,7 +25,12 @@
             <artifactId>auto-service-annotations</artifactId>
             <version>${auto-service.version}</version>
             <optional>true</optional>
-            <scope>provided</scope>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.javaparser</groupId>
+            <artifactId>javaparser-core</artifactId>
+            <version>3.24.8</version>
         </dependency>
     </dependencies>
 
@@ -77,12 +85,6 @@
                             <version>${auto-service.version}</version>
                         </path>
                     </annotationProcessorPaths>
-                    <compilerArgs>
-                        <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
-                        <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
-                        <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
-                        <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
-                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -123,8 +125,6 @@
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                     <additionalJOptions>
                         <additionalJOption>-Xdoclint:none</additionalJOption>
-                        <additionalJOption>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</additionalJOption>
-                        <additionalJOption>-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</additionalJOption>
                     </additionalJOptions>
                 </configuration>
                 <executions>

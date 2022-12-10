@@ -10,18 +10,12 @@ import org.example.Bean.User;
 import java.sql.SQLException;
 import java.util.List;
 
-//@DataRunner(path = "test.db", runner = SqliteRunner.class)
-public class TestService {
-
-//    private SqlRunner sqlRunner;
+@DataRunner(path = "test.db", runner = SqliteRunner.class)
+public interface TestServiceInterface {
 
     @Select("select id, username from user")
-    public List<User> getUsers() throws SQLException {
-        return null;
-    }
+    public List<User> getUsers(int id, String username) throws SQLException;
 
     @Select("select * from news")
-    public List<New> getNews() throws SQLException {
-        return null;
-    }
+    public List<New> getNews() throws SQLException;
 }

@@ -9,8 +9,8 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -18,20 +18,14 @@
         <dependency>
             <groupId>io.github.yfblock</groupId>
             <artifactId>yfSql</artifactId>
-            <version>1.0.12</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/../yfSql/target/yfSql-1.0.12.jar</systemPath>
+            <version>1.0.13</version>
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${basedir}/../yfSql/target/yfSql-1.0.12.jar</systemPath>-->
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.24</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>
