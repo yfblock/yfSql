@@ -122,7 +122,6 @@ public class OrmHandler<T> {
      * @param value the value will be set
      */
     public void setKeyValue(String key, Object value) {
-        System.out.println("Current field is " + key);
         try {
             Method setter = this.paramSet.get(key);
             if(setter == null) return;
