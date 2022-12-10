@@ -34,18 +34,8 @@ public class SelectProcessor extends AbstractProcessor {
 
             TypeElement typeEle = (TypeElement) ele;
 
-            InterfaceBuilder classBuilder = new InterfaceBuilder(typeEle);
             String packageName = ele.getEnclosingElement().toString();
             String interfaceName = ele.getSimpleName().toString();
-
-//            for(Element subEle : ele.getEnclosedElements()) {
-//                ExecutableElement functionEle = (ExecutableElement) subEle;
-//                for(VariableElement vele : functionEle.getParameters()) {
-//                    System.out.println(vele.getSimpleName());
-//                    System.out.println(vele.asType());
-//                }
-//                System.out.println(functionEle.getReturnType());
-//            }
 
             // 输出文件
             try (PrintWriter writer = new PrintWriter(
@@ -53,7 +43,8 @@ public class SelectProcessor extends AbstractProcessor {
                             .getFiler()
                             .createSourceFile(packageName + "." + interfaceName + "Impl")
                             .openWriter())) {
-                classBuilder.build(writer);
+                InterfaceBuilder classBuilder = new InterfaceBuilder(typeEle, messager, writer);
+                classBuilder.build();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

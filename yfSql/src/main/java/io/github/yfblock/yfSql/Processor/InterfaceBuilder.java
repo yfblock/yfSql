@@ -1,26 +1,51 @@
 package io.github.yfblock.yfSql.Processor;
 
 import io.github.yfblock.yfSql.Annotation.*;
+import io.github.yfblock.yfSql.Runner.SqlRunner;
 
+import javax.annotation.processing.Messager;
 import javax.lang.model.element.*;
+import javax.lang.model.type.MirroredTypeException;
+import javax.tools.Diagnostic;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class InterfaceBuilder {
 
     // The element will be handled
     private TypeElement element;
+    private Messager messager;
+    private String interfaceName;
+    private PrintWriter writer;
 
-    public InterfaceBuilder(TypeElement element) {
-        this.element = element;
+    /**
+     * Constructor
+     * @param element the class Element with @DataRunner
+     * @param messager write message to compiler, such as NOTE, WARNING, ERROR
+     * @param writer source file writer
+     */
+    public InterfaceBuilder(TypeElement element, Messager messager, PrintWriter writer) {
+        this.element  = element;
+        this.messager = messager;
+        this.writer   = writer;
+        this.interfaceName = element.getSimpleName().toString();
     }
 
+    /**
+     *
+     * @param sql the sql will be built
+     * @param params interface method params
+     * @return the statement will be used
+     */
     protected String buildSqlAndParams(String sql, String params) {
         System.out.println(params);
         // replace sql to correct String
-        // transfer " to \" in the sql
-        sql = sql.replaceAll("\"", "\\\\\"");
+        // transfer " to \" in the sql, ' to '' for MessageFormat
+        sql = sql.replaceAll("\"", "\\\\\"").replaceAll("'", "''");
         params = params.trim();
         if(params == null || params.equals("")) {
             return "\"" + sql + "\"";
@@ -29,7 +54,11 @@ public class InterfaceBuilder {
         }
     }
 
-    protected void buildSql(PrintWriter writer, ExecutableElement executableElement) {
+    /**
+     * generate sql and related code according to interface method and its annotation
+     * @param executableElement interface method Element with @Select, @Insert or ....
+     */
+    protected void buildSql(ExecutableElement executableElement) {
         System.out.println("----------- judge for function " + executableElement + "-----------");
 
         // 判断是否需要 return
@@ -81,66 +110,127 @@ public class InterfaceBuilder {
         System.out.println("----------- end for function " + executableElement + "-----------");
     }
 
-    protected void buildInterfaceMethods(PrintWriter writer) {
-        for(Element ele : this.element.getEnclosedElements()) {
-            ExecutableElement executableElement = (ExecutableElement) ele;
-
-            // parameters build
-            ArrayList<String> parameters = new ArrayList<>();
-            for(VariableElement variableElement : executableElement.getParameters()) {
-                parameters.add(variableElement.asType() + " " + variableElement.getSimpleName());
-            }
-            // parameters build end
-
-            // get return type
-            String returnType = executableElement.getReturnType().toString();
-
-            // function header
-            writer.println(MessageFormat.format("public {0} {1}({2}) throws SQLException '{'", returnType,
-                    executableElement.getSimpleName(), String.join(",", parameters)));
-
-            // function content build statement for sql
-            this.buildSql(writer, executableElement);
-
-            // function end
-            writer.println("}");
+    /**
+     * get value of runner
+     * @return the class name of runner value
+     */
+    protected String getRunnerClassValue() {
+        DataRunner dataRunner = this.element.getAnnotation(DataRunner.class);
+        try {
+            return dataRunner.value().getTypeName();
+        } catch (MirroredTypeException e) {
+            return e.getTypeMirror().toString();
         }
     }
 
     /**
-     * write the target class and its dependencies string to writer
-     * @param writer the PrintWriter that got from createSource
+     * write package String to writer
      */
-    public void build(PrintWriter writer) {
-        String interfaceName = element.getSimpleName().toString();
+    protected void writePackage() {
         // package
         writer.println("package " + this.element.getEnclosingElement().toString() + ";");
+    }
 
-        // imports
+    /**
+     * write interface methods to writer
+     */
+    protected void writeInterfaceMethods() {
+        this.element.getEnclosedElements().stream()
+            .map(ele -> (ExecutableElement) ele)
+            .forEach(ele -> {
+                // parameters build
+                ArrayList<String> parameters = new ArrayList<>();
+                for(VariableElement variableElement : ele.getParameters()) {
+                    parameters.add(variableElement.asType() + " " + variableElement.getSimpleName());
+                }
+                // parameters build end
+
+                // get return type
+                String returnType = ele.getReturnType().toString();
+
+                // function header
+                writer.write(MessageFormat.format(
+                        "public {0} {1}({2})",
+                        returnType,
+                        ele.getSimpleName(),
+                        String.join(",", parameters)
+                ));
+
+                // write exceptions
+                if (ele.getThrownTypes().size() > 0) {
+                    List<String> exceptions = ele.getThrownTypes().stream()
+                            .map(m -> m.toString()).collect(Collectors.toList());
+                    writer.write(" throws " + String.join(",", exceptions));
+                }
+
+                // write start of content
+                writer.println(" {");
+
+                // function content build statement for sql
+                this.buildSql(ele);
+
+                // function end
+                writer.println("}");
+            });
+    }
+
+    /**
+     * write imports String to writer
+     */
+    protected void writeImports() {
         writer.println("import io.github.yfblock.yfSql.Runner.SqlRunner;");
         writer.println("import io.github.yfblock.yfSql.Sql.DataTableWrapper;");
         writer.println("import java.sql.SQLException;");
         writer.println("import java.text.MessageFormat;");
-        // imports end
+    }
 
-        // class start
-        writer.println(MessageFormat.format("public class {0}Impl implements {0} '{'", interfaceName));
-
-        // fields
+    /**
+     * write fields to writer
+     */
+    protected void writeFields() {
         writer.println("private SqlRunner sqlRunner;");
-        // fields end
+    }
 
-        // constructor TODO: add sqlRunner or its child as the parameter
+    /**
+     * write constructors to writer, NOTE: this method will write multiple constructor
+     */
+    protected void writeConstructors() {
+        // no-args constructor
+        writer.println(MessageFormat.format("public {0}Impl() '{'", interfaceName));
+        String targetClzName = this.getRunnerClassValue();
+        if (!targetClzName.equals(SqlRunner.class.getTypeName())) {
+            writer.println("this.sqlRunner = new " + targetClzName + "();");
+        } else {
+            // print warning
+            this.messager.printMessage(Diagnostic.Kind.WARNING,
+                    "Class " + this.element.getSimpleName() + " Not config the correct runner, " +
+                            "if you will pass runner by yourself, ignore please");
+        }
+        writer.println("}");
+
+        // just SqlRunner as arg constructor
         writer.println(MessageFormat.format("public {0}Impl(SqlRunner sqlRunner) '{'", interfaceName));
         writer.println("this.sqlRunner = sqlRunner;");
         writer.println("}");
-        // constructor end
+    }
 
-        // build interface methods
-        this.buildInterfaceMethods(writer);
-        // build interface methods end
-
+    /**
+     * write class and content to writer
+     */
+    protected void writeClass() {
+        writer.println(MessageFormat.format("public class {0}Impl implements {0} '{'", interfaceName));
+        this.writeFields();
+        this.writeConstructors();
+        this.writeInterfaceMethods();
         writer.println("}");
-        // class end
+    }
+
+    /**
+     * write the target class and its dependencies string to writer
+     */
+    public void build() {
+        this.writePackage();
+        this.writeImports();
+        this.writeClass();
     }
 }

@@ -1,15 +1,13 @@
 package org.example.Runners;
 
 import io.github.yfblock.yfSql.Annotation.*;
-import io.github.yfblock.yfSql.Runner.SqlRunner;
-import io.github.yfblock.yfSql.Runner.SqliteRunner;
-import org.example.Bean.New;
 import org.example.Bean.User;
+import org.example.DatabaseConfig;
 
 import java.sql.SQLException;
 import java.util.List;
 
-@DataRunner(path = "test.db", runner = SqliteRunner.class)
+@DataRunner(DatabaseConfig.class)
 public interface TestServiceInterface {
 
     @Select("select id, username, password from user")
