@@ -59,8 +59,6 @@ public class InterfaceBuilder {
      * @param executableElement interface method Element with @Select, @Insert or ....
      */
     protected void buildSql(ExecutableElement executableElement) {
-        System.out.println("----------- judge for function " + executableElement + "-----------");
-
         // 判断是否需要 return
         if (!executableElement.getReturnType().toString().equals("void")) {
             writer.print("return ");
@@ -107,7 +105,6 @@ public class InterfaceBuilder {
             return;
         }
         Find find = executableElement.getAnnotation(Find.class);
-        System.out.println("----------- end for function " + executableElement + "-----------");
     }
 
     /**

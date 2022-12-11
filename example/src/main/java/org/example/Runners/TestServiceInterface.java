@@ -7,7 +7,7 @@ import org.example.DatabaseConfig;
 import java.sql.SQLException;
 import java.util.List;
 
-@DataRunner(DatabaseConfig.class)
+@DataRunner
 public interface TestServiceInterface {
 
     @Select("select id, username, password from user")

@@ -17,7 +17,6 @@ public class Main {
 
     public static void testForConstructorRunner() throws SQLException {
         System.out.println("---------------------- TEST CONSTRUCTOR RUNNER ----------------------");
-        DatabaseConfig sqliteRunner = new DatabaseConfig();
         TestServiceInterface test = DataRunnerUtil.getWrapper(TestServiceInterface.class);
         // 测试插入
         test.insertUser("admin2", "admin2");
