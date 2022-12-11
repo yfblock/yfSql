@@ -10,40 +10,42 @@
 <dependency>
   <groupId>io.github.yfblock</groupId>
   <artifactId>yfSql</artifactId>
-  <version>1.0.12</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
 ##### 使用gradle方式安装
 
 ```groovy
-implementation 'io.github.yfblock:yfSql:1.0.12'
-annotationProcessor 'io.github.yfblock:yfSql:1.0.12'
-
+implementation 'io.github.yfblock:yfSql:1.1.0'
+annotationProcessor 'io.github.yfblock:yfSql:1.1.0'
 ```
 
 ### 二、添加数据库
 
-​	此数据库操作库仅仅提供操作接口  需要再添加数据库依赖，内置支持mysql和sqlite
+​	此数据库操作库仅仅提供操作接口  需要再添加数据库依赖
 
 ### 三、设置数据库
 
-##### 注解方式
-
 ```java
-// mysql
-// 默认情况下 hostname为localhost port为3306 username为root password为root 若系统配置相同 则可以使用默认设置
-@DataRunner(database = "java-orm-test", hostname = "localhost", port = "3306", username = "root", password = "root")
-public class UserWrapper {
+import io.github.yfblock.yfSql.Annotation.DatabaseConnection;
+import io.github.yfblock.yfSql.Runner.SqlRunner;
+
+public class DatabaseConfig extends SqlRunner {
+    /**
+     * SqliteRunner Constructor, build a sqlite runner
+     */
+    public DatabaseConfig() {
+        // sqlite
+        super("org.sqlite.JDBC", "jdbc:sqlite:test.db", "", "");
+        // 如果是 mysql
+        // super("com.mysql.cj.jdbc.driver", "jdbc:mysql://localhost:3306/数据库名称", "用户名", "密码");
+    }
 }
 
-//sqlite
-@DataRunner(runner = SqliteRunner.class, path = "test.db")
-public class UserWrapper {
-}
 ```
 
-使用时设置`runner`，如果使用其他数据库则可以实现`SqlRunner`接口来定制支持其他数据库
+如果需要使用其他的数据库，配置数据库时，需要在`构造函数`调用 `super("jdbc_driver', 'url', 'username', 'password')`
 
 ##### 四、使用wrapper
 
@@ -71,36 +73,37 @@ public class User {
 UserWrapper.java
 
 ```java
-@DataRunner(runner = SqliteRunner.class, path = "test.db")
-public class UserWrapper {
+@DataRunner(DatabaseConfig.class)
+// 目前只能在 interface 上使用
+public interface UserWrapper {
 
     @Select("select * from user")
-    public ArrayList<User> getUsers() {return null;}
+    public ArrayList<User> getUsers() throws SQLException;
 
     @Select("select * from user where username={0} and password={1}")
-    public User login(String username, String password) {return null;}
+    public User login(String username, String password) throws SQLException;
 
     @Insert("insert into user (username, password) VALUES ({0}, {1})")
-    public Integer register(String username, String password) { return 0;}
+    public Integer register(String username, String password) throws SQLException;
 
     @Update("update user set qq={0} where id={1}")
-    public void updateQQById(String qq, int id){}
+    public void updateQQById(String qq, int id) throws SQLException;
 
     @Delete("delete from user where id={0}")
-    public void deleteUserById(int id){}
+    public void deleteUserById(int id) throws SQLException;
 
     @Select("select * from user where balance > {0}")
-    public User getUserByBalance(int balance) {return null;}
+    public User getUserByBalance(int balance) throws SQLException;
 }
 
 ```
 
-上述为增删改查结构样例，使用注解方式定义Sql，编译时根据Sql生成函数主体代码，函数主体可缺省，但是推荐添加return null;等空语句，便于编辑器查找语法错误。
+上述为增删改查结构样例，使用注解方式定义Sql，编译时根据Sql生成函数主体代码
 
 调用
 
 ```java
-UserWrapper userWrapper = new UserWrapper();
+UserWrapper userWrapper = TestServiceInterface test = DataRunnerUtil.getWrapper(UserWrapper.class);
 System.out.println(userWrapper.getUserByBalance(1200));
 // 增
 userWrapper.register("admins", "123");
@@ -116,30 +119,10 @@ ArrayList<User> users = userWrapper.getUsers();
 ```
 
 ###### 异常抛出
-> 默认情况下异常将由框架进行出来
-> 
-> 如果需要进行异常抛出 可在wrapper中加入throws 目前只支持SQLException
-> 
-> 如下
 
-```java
-import java.sql.SQLException;
+需要在调用时对 `SQLException` 异常进行处理
 
-@DataRunner(runner = SqliteRunner.class, path = "test.db")
-public class UserWrapper {
+### 五、开发计划
 
-    @Select("select * from user")
-    public ArrayList<User> getUsers() throws SQLException {
-        return null;
-    }
-}
-```
-
-##### 五、链式操作方式
-
-> 暂时取消链式操作
-
-### 六、开发计划
-
-- 计划支持字段校验功能，执行前检测参数是否符合正则
-- 支持多数据库，多表联合查询(暂未有很好的思路，有兴趣可以在issus中提出)
+- 单列查询时，直接返回对应的 `List`
+- 如果函数不需要处理 SQLException， 直接由程序进行生成相应的 `try` `catch` 结构。

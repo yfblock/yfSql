@@ -1,6 +1,5 @@
 package org.example;
 
-import io.github.yfblock.yfSql.Annotation.DatabaseConnection;
 import io.github.yfblock.yfSql.Utils.DataRunnerUtil;
 import org.example.Bean.User;
 import org.example.Runners.TestServiceInterface;
