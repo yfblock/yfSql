@@ -21,4 +21,7 @@ public interface TestServiceInterface {
 
     @Delete("delete from user where username = '{0}'")
     public void deleteUser(String username) throws SQLException;
+
+    @Find("select * from user where username = '{0}'")
+    public User getUser(String username) throws SQLException;
 }

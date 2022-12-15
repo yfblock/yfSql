@@ -7,7 +7,7 @@
     <name>yfSql</name>
     <groupId>io.github.yfblock</groupId>
     <artifactId>yfSql</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <packaging>jar</packaging>
     <description>a simple java ORM framework for database, use annotation instead of xml</description>
     <url>https://github.com/yfblock/yfSql</url>
@@ -117,7 +117,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.4.1</version>
                 <configuration>
-                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+<!--                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>-->
                     <additionalJOptions>
                         <additionalJOption>-Xdoclint:none</additionalJOption>
                     </additionalJOptions>

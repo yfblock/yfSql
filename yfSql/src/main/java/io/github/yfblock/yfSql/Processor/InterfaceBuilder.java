@@ -106,6 +106,14 @@ public class InterfaceBuilder {
         }
         // TODO: add a feature, just select one row
         Find find = executableElement.getAnnotation(Find.class);
+        if(find != null) {
+            String returnType = executableElement.getReturnType().toString();
+            writer.println(MessageFormat.format(
+                    "DataTableWrapper.executeQueryFind({0}, {1}.class, this.sqlRunner);",
+                    this.buildSqlAndParams(find.value(), parameterString),
+                    returnType
+            ));
+        }
     }
 
     /**

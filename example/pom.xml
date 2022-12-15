@@ -18,7 +18,7 @@
         <dependency>
             <groupId>io.github.yfblock</groupId>
             <artifactId>yfSql</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.1</version>
 <!--            <scope>system</scope>-->
 <!--            <systemPath>${basedir}/../yfSql/target/yfSql-1.0.12.jar</systemPath>-->
         </dependency>

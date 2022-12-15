@@ -10,15 +10,15 @@
 <dependency>
   <groupId>io.github.yfblock</groupId>
   <artifactId>yfSql</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
 </dependency>
 ```
 
 ##### 使用gradle方式安装
 
 ```groovy
-implementation 'io.github.yfblock:yfSql:1.1.0'
-annotationProcessor 'io.github.yfblock:yfSql:1.1.0'
+implementation 'io.github.yfblock:yfSql:1.1.1'
+annotationProcessor 'io.github.yfblock:yfSql:1.1.1'
 ```
 
 ### 二、添加数据库
@@ -80,12 +80,12 @@ public interface UserWrapper {
     @Select("select * from user")
     public ArrayList<User> getUsers() throws SQLException;
 
-//    暂不支持 @Find 操作
-//    @Find("select * from user where username={0} and password={1}")
-//    public User login(String username, String password) throws SQLException;
-//
-//    @Find("select * from user where balance > {0}")
-//    public User getUserByBalance(int balance) throws SQLException;
+    // Find 时返回值不需要 List
+    @Find("select * from user where username={0} and password={1}")
+    public User login(String username, String password) throws SQLException;
+
+    @Find("select * from user where balance > {0}")
+    public User getUserByBalance(int balance) throws SQLException;
     
     @Insert("insert into user (username, password) VALUES ({0}, {1})")
     public Integer register(String username, String password) throws SQLException;

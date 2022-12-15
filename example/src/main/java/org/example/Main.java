@@ -25,10 +25,9 @@ public class Main {
         }
         // 测试修改
         test.updateUser("adminUpdate2", "admin2");
-        // 测试 select 查询
-        for(User user : test.getUsers()) {
-            System.out.println(user);
-        }
+        // 测试 find 查询
+        User findUser = test.getUser("admin2");
+        System.out.println(findUser);
         // 测试删除
         test.deleteUser("admin2");
         // 测试 select 查询
@@ -50,10 +49,9 @@ public class Main {
         }
         // 测试修改
         test.updateUser("adminUpdate2", "admin2");
-        // 测试 select 查询
-        for(User user : test.getUsers()) {
-            System.out.println(user);
-        }
+        // 测试 find 查询
+        User findUser = test.getUser("admin2");
+        System.out.println(findUser);
         // 测试删除
         test.deleteUser("admin2");
         // 测试 select 查询
