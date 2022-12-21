@@ -10,15 +10,15 @@
 <dependency>
   <groupId>io.github.yfblock</groupId>
   <artifactId>yfSql</artifactId>
-  <version>1.1.1</version>
+  <version>1.1.2</version>
 </dependency>
 ```
 
 ##### 使用gradle方式安装
 
 ```groovy
-implementation 'io.github.yfblock:yfSql:1.1.1'
-annotationProcessor 'io.github.yfblock:yfSql:1.1.1'
+implementation 'io.github.yfblock:yfSql:1.1.2'
+annotationProcessor 'io.github.yfblock:yfSql:1.1.2'
 ```
 
 ### 二、添加数据库
@@ -39,7 +39,7 @@ public class DatabaseConfig extends SqlRunner {
         // sqlite
         super("org.sqlite.JDBC", "jdbc:sqlite:test.db", "", "");
         // 如果是 mysql
-        // super("com.mysql.cj.jdbc.driver", "jdbc:mysql://localhost:3306/数据库名称", "用户名", "密码");
+        // super("com.mysql.cj.jdbc.Driver", "jdbc:mysql://localhost:3306/数据库名称", "用户名", "密码");
     }
 }
 

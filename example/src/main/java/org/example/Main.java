@@ -58,7 +58,7 @@ public class Main {
         for(User user : test.getUsers()) {
             System.out.println(user);
         }
+        sqliteRunner.close();
         System.out.println("-------------------- TEST PASS RUNNER RUNNER END --------------------");
-
     }
 }

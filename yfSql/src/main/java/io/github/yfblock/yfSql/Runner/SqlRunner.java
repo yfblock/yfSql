@@ -18,15 +18,35 @@ public class SqlRunner {
     }
 
     /**
+     * run before executeQuery, always used for recording and printing sql
+     * @param sqlString the sql will be run
+     */
+    public void beforeExecuteQuery(String sqlString) {
+        System.out.println("executeQuery: " + sqlString);
+    }
+
+    /**
      * Execute sql
      * @param sqlString sql
      * @return the result
      * @throws SQLException throws sql exception
      */
     public ResultSet executeQuery(String sqlString) throws SQLException {
+        this.beforeExecuteQuery(sqlString);
         PreparedStatement preparedStatement = this.conn.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
         preparedStatement.execute();
         if (sqlString.trim().indexOf("insert") == 0) return preparedStatement.getGeneratedKeys();
         else return preparedStatement.getResultSet();
+    }
+
+    /**
+     * close connection
+     */
+    public void close() {
+        try {
+            this.conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

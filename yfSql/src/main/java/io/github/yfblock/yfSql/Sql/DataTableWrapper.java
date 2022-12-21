@@ -47,7 +47,6 @@ public class DataTableWrapper<T> {
      */
     public static<Y> ArrayList<Y> executeQuery(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) throws SQLException {
         OrmHandler<Y> ormHandler = new OrmHandler<>(targetClass);
-        System.out.println("executeQuery: " + sqlString);
         ResultSet resultSet = sqlRunner.executeQuery(sqlString);
         ArrayList<Y> targets = new ArrayList<>();
         while (resultSet.next()) {
@@ -67,7 +66,6 @@ public class DataTableWrapper<T> {
      */
     public static<Y> Y executeQueryFind(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) throws SQLException {
         OrmHandler<Y> ormHandler = new OrmHandler<>(targetClass);
-        System.out.println("executeQuery: " + sqlString);
         ResultSet resultSet = sqlRunner.executeQuery(sqlString);
         if (resultSet.next()) {
             return DataTableWrapper.updateOrmHandler(ormHandler, resultSet);
@@ -109,7 +107,6 @@ public class DataTableWrapper<T> {
      * @return result
      */
     public static<Y> Y executeQueryOneFieldFind(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) throws SQLException {
-        System.out.println("executeQuery: " + sqlString);
         ResultSet resultSet = sqlRunner.executeQuery(sqlString);
         // Return if there is data
         if (resultSet.next()) {
@@ -128,7 +125,6 @@ public class DataTableWrapper<T> {
      * @return result
      */
     public static<Y> ArrayList<Y> executeQueryOneField(String sqlString, Class<Y> targetClass, SqlRunner sqlRunner) throws SQLException {
-        System.out.println("executeQuery: " + sqlString);
         ResultSet resultSet = sqlRunner.executeQuery(sqlString);
         ArrayList<Y> targets = new ArrayList<>();
         while (resultSet.next()) {
@@ -146,7 +142,6 @@ public class DataTableWrapper<T> {
      * @return execute result or the key of the insert
      */
     public static int execute(String sqlString, SqlRunner sqlRunner) throws SQLException {
-        System.out.println("execute: " + sqlString);
         ResultSet resultSet = sqlRunner.executeQuery(sqlString);
         if (resultSet != null && resultSet.next()) return resultSet.getInt(1);
         return 0;
