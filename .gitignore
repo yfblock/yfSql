@@ -5,3 +5,4 @@ gradle
 gradle.properties
 **/target
 **/*.iml
+.vscode

@@ -6,24 +6,23 @@ import io.github.yfblock.yfSql.Annotation.*;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
-import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
 import java.util.Set;
 
 
+/**
+ * @author yufeng
+ */
 @AutoService(javax.annotation.processing.Processor.class)
 @SupportedAnnotationTypes(value = {
         "io.github.yfblock.yfSql.Annotation.DataRunner"
 })
 public class SelectProcessor extends AbstractProcessor {
-
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        ProcessingEnvironment unwrapProcEnv = jbUnwrap(ProcessingEnvironment.class, processingEnv);
-        Messager messager = unwrapProcEnv.getMessager();
+        Messager messager = processingEnv.getMessager();
 
         for(Element ele : roundEnvironment.getElementsAnnotatedWith(DataRunner.class)) {
             // 判断在哪个地方被使用
@@ -43,7 +42,7 @@ public class SelectProcessor extends AbstractProcessor {
                             .getFiler()
                             .createSourceFile(packageName + "." + interfaceName + "Impl")
                             .openWriter())) {
-                InterfaceBuilder classBuilder = new InterfaceBuilder(typeEle, messager, writer);
+                InterfaceBuilder classBuilder = new InterfaceBuilder(typeEle, writer);
                 classBuilder.build();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -54,28 +53,8 @@ public class SelectProcessor extends AbstractProcessor {
     }
 
     @Override
-    public synchronized void init(ProcessingEnvironment procEnv) {
-        super.init(procEnv);
-
-        // 包含以便于 idea 设置
-        ProcessingEnvironment unwrapProcEnv = jbUnwrap(ProcessingEnvironment.class, procEnv);
-
-    }
-
-    @Override
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.latestSupported();
-    }
-
-    private static <T> T jbUnwrap(Class<? extends T> iface, T wrapper) {
-        T unwrapped = null;
-        try {
-            final Class<?> apiWrappers = wrapper.getClass().getClassLoader().loadClass("org.jetbrains.jps.javac.APIWrappers");
-            final Method unwrapMethod = apiWrappers.getDeclaredMethod("unwrap", Class.class, Object.class);
-            unwrapped = iface.cast(unwrapMethod.invoke(null, iface, wrapper));
-        }
-        catch (Throwable ignored) {}
-        return unwrapped != null? unwrapped : wrapper;
     }
 
 }

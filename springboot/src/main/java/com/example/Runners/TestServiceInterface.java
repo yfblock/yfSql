@@ -1,12 +1,18 @@
-package org.example.Runners;
+package com.example.Runners;
 
 import io.github.yfblock.yfSql.Annotation.*;
-import org.example.Bean.User;
 
 import java.sql.SQLException;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
+import com.example.Bean.User;
+
 @DataRunner
+// @Component
+@Repository
 public interface TestServiceInterface {
 
     @Select("select id, username, password from user")

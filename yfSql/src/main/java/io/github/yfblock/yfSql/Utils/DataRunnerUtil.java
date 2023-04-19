@@ -1,9 +1,12 @@
 package io.github.yfblock.yfSql.Utils;
 
-import io.github.yfblock.yfSql.Runner.SqlRunner;
-
 import java.lang.reflect.InvocationTargetException;
 
+import javax.sql.DataSource;
+
+/**
+ * @author yufeng
+ */
 public class DataRunnerUtil {
     public static<T> T getWrapper(Class<T> cls) {
         try {
@@ -16,10 +19,10 @@ public class DataRunnerUtil {
         }
     }
 
-    public static<T> T getWrapper(Class<T> cls, SqlRunner sqlRunner) {
+    public static<T> T getWrapper(Class<T> cls, DataSource dataSource) {
         try {
             Class<?> clz = Class.forName(cls.getTypeName() + "Impl");
-            return (T) clz.getDeclaredConstructor(SqlRunner.class).newInstance(sqlRunner);
+            return (T) clz.getDeclaredConstructor(DataSource.class).newInstance(dataSource);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
                  | InvocationTargetException | NoSuchMethodException e) {
             System.out.println("Not Found The Correct Class For The Interface named " + cls.getName());

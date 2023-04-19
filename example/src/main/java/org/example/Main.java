@@ -1,5 +1,7 @@
 package org.example;
 
+import io.github.yfblock.yfSql.Sql.BasicDataSource;
+import io.github.yfblock.yfSql.Sql.DataTableWrapper;
 import io.github.yfblock.yfSql.Utils.DataRunnerUtil;
 import org.example.Bean.User;
 import org.example.Runners.TestServiceInterface;
@@ -7,8 +9,12 @@ import org.example.Runners.TestServiceInterface;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
 public class Main {
+    public static DataSource dataSource;
     public static void main(String[] args) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        dataSource = new BasicDataSource("org.sqlite.JDBC", "jdbc:sqlite:test.db", "", "");
         Main.testForPassSqlRunner();
         System.out.println();
         Main.testForConstructorRunner();
@@ -16,7 +22,7 @@ public class Main {
 
     public static void testForConstructorRunner() throws SQLException {
         System.out.println("---------------------- TEST CONSTRUCTOR RUNNER ----------------------");
-        TestServiceInterface test = DataRunnerUtil.getWrapper(TestServiceInterface.class);
+        TestServiceInterface test = DataRunnerUtil.getWrapper(TestServiceInterface.class, Main.dataSource);
         // 测试插入
         test.insertUser("admin2", "admin2");
         // 测试 select 查询
@@ -39,8 +45,7 @@ public class Main {
 
     public static void testForPassSqlRunner() throws SQLException {
         System.out.println("---------------------- TEST PASS RUNNER RUNNER ----------------------");
-        DatabaseConfig sqliteRunner = new DatabaseConfig();
-        TestServiceInterface test = DataRunnerUtil.getWrapper(TestServiceInterface.class, sqliteRunner);
+        TestServiceInterface test = DataRunnerUtil.getWrapper(TestServiceInterface.class, Main.dataSource);
         // 测试插入
         test.insertUser("admin2", "admin2");
         // 测试 select 查询
@@ -58,7 +63,6 @@ public class Main {
         for(User user : test.getUsers()) {
             System.out.println(user);
         }
-        sqliteRunner.close();
         System.out.println("-------------------- TEST PASS RUNNER RUNNER END --------------------");
     }
 }
